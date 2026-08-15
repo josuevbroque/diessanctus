@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dies Sanctus — Liturgia do Dia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment:#F3EEDF;
+    --parchment-deep:#EAE2CC;
+    --ink:#2B2420;
+    --ink-soft:#5A5147;
+    --gold:#B8923B;
+    --gold-soft:#D9C088;
+    --rule:#C9BE9E;
+    --verde:#3B6E4F;
+    --roxa:#5B3A70;
+    --branca:#C9A227;
+    --vermelha:#A32638;
+    --escarlate:#8C1F2B;
+    --preta:#232020;
+    --cor: var(--gold);
+    --cor-soft: rgba(184,146,59,0.14);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 15% -5%, var(--cor-soft), transparent 45%),
+      radial-gradient(circle at 100% 100%, var(--cor-soft), transparent 42%),
+      var(--parchment);
+    color:var(--ink);
+    font-family:'Source Serif 4', serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:0 20px 80px;
+    line-height:1.5;
+    transition:background .4s ease;
+  }
+  .top-bar{
+    position:fixed;
+    top:0; left:0; right:0;
+    height:6px;
+    background:var(--cor);
+    z-index:5;
+    transition:background .4s ease;
+  }
+  .page{
+    width:100%;
+    max-width:680px;
+    padding-top:44px;
+  }
+  .masthead{
+    text-align:center;
+    margin-bottom:34px;
+  }
+  .masthead .eyebrow{
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    font-size:.72rem;
+    color:var(--ink-soft);
+    font-family:'Source Serif 4', serif;
+  }
+  .masthead h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:2.5rem;
+    margin:.25em 0 .1em;
+    letter-spacing:-.01em;
+  }
+  .masthead .data-hoje{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:1.25rem;
+    color:var(--ink-soft);
+  }
+
+  .cor-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    margin-top:14px;
+    padding:5px 14px 5px 10px;
+    border-radius:20px;
+    background:var(--cor-soft);
+    border:1px solid var(--cor);
+    transition:background .4s ease, border-color .4s ease;
+  }
+  .cor-badge .dot{
+    width:9px;height:9px;
+    border-radius:50%;
+    background:var(--cor);
+    transition:background .4s ease;
+    flex-shrink:0;
+  }
+  .cor-badge span.label{
+    font-family:'Source Serif 4', serif;
+    font-size:.74rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--ink);
+  }
+
+  .day-nav{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin-top:22px;
+    flex-wrap:wrap;
+  }
+  .day-nav button{
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .day-nav .voltar-hoje{
+    border-color:var(--cor);
+    color:var(--cor);
+  }
+  .day-nav .voltar-hoje:hover{
+    background:var(--cor);
+    color:#fff;
+  }
+
+  .seal-wrap{
+    display:flex;
+    justify-content:center;
+    margin:30px 0 30px;
+  }
+  .seal{
+    width:148px;height:148px;
+    border-radius:50%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    color:#F3EEDF;
+    font-family:'Fraunces', serif;
+    box-shadow:
+      0 2px 0 rgba(0,0,0,.25) inset,
+      0 -6px 14px rgba(0,0,0,.18) inset,
+      0 10px 30px -6px var(--cor);
+    position:relative;
+    transform:rotate(-3deg);
+    transition:box-shadow .4s ease;
+  }
+  .seal::after{
+    content:"";
+    position:absolute;
+    inset:8px;
+    border-radius:50%;
+    border:1px dashed rgba(255,255,255,.35);
+  }
+  .seal .cor-nome{
+    font-size:.62rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    opacity:.95;
+    text-shadow:0 1px 3px rgba(0,0,0,.5);
+  }
+  .seal .ciclo{
+    font-size:2.1rem;
+    font-weight:600;
+    line-height:1;
+    margin:2px 0;
+    text-shadow:0 1px 4px rgba(0,0,0,.5);
+  }
+  .seal .semana{
+    font-size:.6rem;
+    text-align:center;
+    padding:0 14px;
+    opacity:.95;
+    font-family:'Source Serif 4', serif;
+    text-shadow:0 1px 3px rgba(0,0,0,.5);
+  }
+
+  .reading.vazio{
+    padding:26px 28px;
+  }
+  .reading.vazio .vazio-texto{
+    margin:10px 0 0;
+    font-size:.98rem;
+    line-height:1.6;
+    color:var(--ink-soft);
+  }
+  .reading.vazio .vazio-texto strong{
+    color:var(--ink);
+    font-family:'Fraunces', serif;
+    font-weight:600;
+  }
+
+  .season-name{
+    text-align:center;
+    font-family:'Fraunces', serif;
+    font-size:1.4rem;
+    font-weight:600;
+    margin-bottom:2px;
+  }
+  .day-name{
+    text-align:center;
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    color:var(--ink-soft);
+    font-size:1.15rem;
+    margin-bottom:8px;
+  }
+  .day-name::after{
+    content:"";
+    display:block;
+    width:56px;
+    height:3px;
+    margin:16px auto 0;
+    background:var(--cor);
+    border-radius:2px;
+    transition:background .4s ease;
+  }
+
+  .card{
+    background:linear-gradient(180deg, #FBF8EF, var(--parchment-deep));
+    border:1px solid var(--rule);
+    border-top:3px solid var(--cor);
+    border-radius:4px;
+    padding:8px 0;
+    margin-top:36px;
+    box-shadow:0 1px 0 rgba(255,255,255,.6) inset, 0 18px 40px -20px rgba(43,36,32,.35);
+    transition:border-top-color .4s ease;
+  }
+
+  .reading{
+    padding:22px 28px;
+    border-bottom:1px solid var(--rule);
+  }
+  .reading:last-child{border-bottom:none;}
+  .reading .label{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:.72rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--cor);
+    transition:color .4s ease;
+    margin-bottom:6px;
+  }
+  .reading .ref{
+    font-size:1.28rem;
+    font-family:'Fraunces', serif;
+    font-weight:400;
+  }
+  .reading .texto{
+    margin-top:14px;
+    font-size:1rem;
+    line-height:1.7;
+    color:var(--ink);
+    border-left:2px solid var(--cor-soft);
+    padding-left:16px;
+    transition:border-color .4s ease;
+  }
+  .reading .texto .vnum{
+    font-size:.68em;
+    vertical-align:super;
+    color:var(--cor);
+    font-weight:600;
+    margin-right:1px;
+  }
+  .reading .texto.carregando,
+  .reading .texto.erro{
+    font-family:'Source Serif 4', serif;
+    font-style:italic;
+    color:var(--ink-soft);
+    font-size:.88rem;
+    border-left-color:var(--rule);
+  }
+  .reading .actions{
+    margin-top:14px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  button, .link-btn{
+    font-family:'Source Serif 4', serif;
+    font-size:.82rem;
+    border:1px solid var(--ink);
+    background:transparent;
+    color:var(--ink);
+    padding:6px 14px;
+    border-radius:20px;
+    cursor:pointer;
+    text-decoration:none;
+    transition:background .15s, color .15s;
+  }
+  button:hover, .link-btn:hover{
+    background:var(--cor);
+    border-color:var(--cor);
+    color:#fff;
+  }
+  button:focus-visible, .link-btn:focus-visible{
+    outline:2px solid var(--cor);
+    outline-offset:2px;
+  }
+  button.copiado{
+    background:var(--verde);
+    border-color:var(--verde);
+    color:#fff;
+  }
+
+  .toolbar{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    margin-top:28px;
+    flex-wrap:wrap;
+  }
+
+  .aviso{
+    max-width:620px;
+    margin:34px auto 0;
+    font-size:.82rem;
+    color:var(--ink-soft);
+    text-align:center;
+    padding:0 12px;
+  }
+  .aviso a{color:var(--roxa);}
+
+  .rodape{
+    text-align:center;
+    margin-top:52px;
+    font-size:.72rem;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+
+  @media (max-width:480px){
+    .masthead h1{font-size:1.9rem;}
+    .reading{padding:18px 18px;}
+  }
+</style>
+</head>
+<body>
+<div class="top-bar" id="topBar"></div>
+<div class="page">
+
+  <div class="masthead">
+    <div class="eyebrow">Ano da Igreja · IELB</div>
+    <h1>Dies Sanctus</h1>
+    <div class="data-hoje" id="dataHoje"></div>
+    <div class="cor-badge" id="corBadge">
+      <span class="dot"></span>
+      <span class="label" id="corBadgeLabel">—</span>
+    </div>
+  </div>
+
+  <div class="day-nav">
+    <button id="btnAnterior" aria-label="Dia anterior">← Dia anterior</button>
+    <button id="btnHoje" class="voltar-hoje" style="display:none;">Voltar para hoje</button>
+    <button id="btnProximo" aria-label="Próximo dia">Próximo dia →</button>
+  </div>
+
+  <div class="seal-wrap">
+    <div class="seal" id="seal">
+      <div class="cor-nome" id="corNome">—</div>
+      <div class="ciclo" id="cicloLetra">—</div>
+      <div class="semana" id="semanaTxt">carregando…</div>
+    </div>
+  </div>
+
+  <div class="season-name" id="nomeDia">—</div>
+  <div class="day-name" id="periodoNome">—</div>
+
+  <div class="card" id="cardLeituras"></div>
+
+  <div class="toolbar">
+    <button id="btnCopiarTudo">Copiar todas as referências</button>
+  </div>
+
+  <p class="aviso">
+    As referências seguem o lecionário do <em>Hinário Luterano (IELB)</em>: domingos e dias móveis do
+    lecionário trienal, dias festivos de data fixa (com leituras próprias) e comemorações (sem leituras
+    — apenas citadas no dia). Dias sem leitura própria mostram a última leitura disponível. O texto
+    bíblico exibido é da <em>Almeida Atualizada</em>, tradução em domínio público — não a NTLH, cujos
+    direitos autorais pertencem à Sociedade Bíblica do Brasil. Leituras muito extensas (como a Paixão)
+    podem aparecer apenas como link.
+  </p>
+
+  <div class="rodape" id="rodape">Calculado automaticamente a partir da data de hoje</div>
+</div>
+
+<script>
+/* ---------- Dados do lecionário (Trienal A / B / C) ---------- */
+/* Cada leitura: [Salmo, Antigo Testamento, Epístola, Evangelho] */
+const CYCLES = {
+A: {
+  advento: [
+    ["Sl 122","Is 2.1-5","Rm 13.(8-10)11-14","Mt 21.1-11 ou Mt 24.36-44"],
+    ["Sl 72.1-7","Is 11.1-10","Rm 15.4-13","Mt 3.1-12"],
+    ["Sl 146","Is 35.1-10","Tg 5.7-10","Mt 11.2-15"],
+    ["Sl 24","Is 7.10-17","Rm 1.1-7","Mt 1.18-25"]
+  ],
+  vespNatal: ["Sl 110.1-4","Is 7.10-14","1Jo 4.7-16","Mt 1.18-25"],
+  diaNatal: ["Sl 2","Is 52.7-10","Hb 1.1-6(7-12)","Jo 1.1-14(15-18)"],
+  natal1: ["Sl 111","Is 63.7-14","Gl 4.4-7","Mt 2.13-23"],
+  natal2: ["Sl 119.97-104","1Rs 3.4-15","Ef 1.3-14","Lc 2.40-52"],
+  epifania: ["Sl 72.1-11(12-15)","Is 60.1-6","Ef 3.1-12","Mt 2.1-12"],
+  epifaniaDom: [
+    ["Sl 29","Is 42.1-9","Rm 6.1-11","Mt 3.13-17"],
+    ["Sl 40.1-11","Is 49.1-7","1Co 1.1-9","Jo 1.29-42a"],
+    ["Sl 27.1-9(10-14)","Is 9.1-4","1Co 1.10-18","Mt 4.12-25"],
+    ["Sl 15","Mq 6.1-8","1Co 1.18-31","Mt 5.1-12"],
+    ["Sl 112.1-9","Is 58.3-9a","1Co 2.1-12(13-16)","Mt 5.13-20"],
+    ["Sl 119.1-8","Dt 30.15-20","1Co 3.1-9","Mt 5.21-37"],
+    ["Sl 119.33-40","Lv 19.1-2,9-18","1Co 3.10-23","Mt 5.38-48"],
+    ["Sl 115.(1-8)9-18","Is 49.8-16a","1Co 4.1-13","Mt 6.24-34"]
+  ],
+  transfiguracao: ["Sl 2.6-12","Êx 24.8-18","2Pe 1.16-21","Mt 17.1-9"],
+  cinzas: ["Sl 51.1-13(14-19)","Jl 2.12-19","2Co 5.20b-6.10","Mt 6.1-6,16-21"],
+  quaresma: [
+    ["Sl 32.1-7","Gn 3.1-21","Rm 5.12-19","Mt 4.1-11"],
+    ["Sl 121","Gn 12.1-9","Rm 4.1-8,13-17","Jo 3.1-17"],
+    ["Sl 95.1-9","Êx 17.1-7","Rm 5.1-8","Jo 4.5-26(27-30,39-42)"],
+    ["Sl 142","Is 42.14-21","Ef 5.8-14","Jo 9.1-41 ou Jo 9.1-7,13-17,34-39"],
+    ["Sl 130","Ez 37.1-14","Rm 8.1-11","Jo 11.1-45(46-53) ou Jo 11.17-27,38-53"]
+  ],
+  ramos: ["Sl 118.19-29 ou Sl 31.9-16","Is 50.4-9a","Fp 2.5-11","Mt 26.1-27.66 ou Mt 27.11-66 [ou Mt 21.1-11] ou Jo 12.20-43"],
+  semanaSanta: {
+    seg:["Sl 36.5-10","Is 50.5-10","Hb 9.11-15","Mt 26.1-27.66 ou Jo 12.1-23"],
+    ter:["Sl 71.1-14","Is 49.1-7","1Co 1.18-25(26-31)","Mc 14.1-15.47 ou Jo 12.23-50"],
+    qua:["Sl 70","Is 62.11-63.7","Rm 5.6-11","Lc 22.1-23.56 ou Jo 13.16-38"],
+    quinta:["Sl 116.12-19","Êx 24.3-11","Hb 9.11-22","Mt 26.17-30"],
+    sexta:["Sl 22 ou Sl 31","Is 52.13-53.12","Hb 4.14-16;5.7-9","Jo 18.1-19.42 ou Jo 19.17-30"],
+    sabado:["Sl 16","Dn 6.1-24","1Pe 4.1-8","Mt 27.57-66"]
+  },
+  pascoa: [
+    ["Sl 16","At 10.34-43 ou Jr 31.1-6","Cl 3.1-4","Mt 28.1-10"],
+    ["Sl 148","At 5.29-42","1Pe 1.3-9","Jo 20.19-31"],
+    ["Sl 116.1-14","At 2.14a,36-41","1Pe 1.17-25","Lc 24.13-35"],
+    ["Sl 23","At 2.42-47","1Pe 2.19-25","Jo 10.1-10"],
+    ["Sl 146","At 6.1-9;7.2a,51-60","1Pe 2.2-10","Jo 14.1-14"],
+    ["Sl 66.8-20","At 17.16-31","1Pe 3.13-22","Jo 14.15-21"],
+    ["Sl 68.1-10","At 1.12-26","1Pe 4.12-19;5.6-11","Jo 17.1-11"]
+  ],
+  ascensao: ["Sl 47","At 1.1-11","Ef 1.15-23","Lc 24.44-53"],
+  pentecoste: ["Sl 25.1-15","Nm 11.24-30 [ou Jl 2.29-29]","At 2.1-21","Jo 7.37-39"],
+  trindade: ["Sl 8","Gn 1.1-2.4a","At 2.14a,22-36","Mt 28.16-20"],
+  proprios: {
+    3:["24-28/5",["Sl 115.(1-8)9-18","Is 49.8-16a","Rm 1.8-17","Mt 6.24-34"]],
+    4:["29/5-4/6",["Sl 4","Dt 11.18-21,26-28","Rm 3.21-28","Mt 7.15-29"]],
+    5:["5-11/6",["Sl 119.65-72","Os 5.15-6.6","Rm 4.13-25","Mt 9.9-13"]],
+    6:["12-18/6",["Sl 100","Êx 19.2-8","Rm 5.6-15","Mt 9.35-10.8(9-20)"]],
+    7:["19-25/6",["Sl 91.1-10(11-16)","Jr 20.7-13","Rm 6.12-23","Mt 10.5a,21-33"]],
+    8:["26/6-2/7",["Sl 119.153-160","Jr 28.5-9","Rm 7.1-13","Mt 10.34-42"]],
+    9:["3-9/7",["Sl 145.1-14","Zc 9.9-12","Rm 7.14-25a","Mt 11.25-30"]],
+    10:["10-16/7",["Sl 65.(1-8)9-13","Is 55.10-13","Rm 8.12-17","Mt 13.1-9,18-23"]],
+    11:["17-23/7",["Sl 119.57-64","Is 44.6-8","Rm 8.18-27","Mt 13.24-30,36-43"]],
+    12:["24-30/7",["Sl 125","Dt 7.6-9","Rm 8.28-39","Mt 13.44-52"]],
+    13:["31/7-6/8",["Sl 136.1-9(23-26)","Is 55.1-5","Rm 9.1-5(6-13)","Mt 14.13-21"]],
+    14:["7-13/8",["Sl 18.1-6(7-16)","Jó 38.4-18","Rm 10.5-17","Mt 14.22-33"]],
+    15:["14-20/8",["Sl 67","Is 56.1,6-8","Rm 11.1-2a,13-15,28-32","Mt 15.21-28"]],
+    16:["21-27/8",["Sl 138","Is 51.1-6","Rm 11.33-12.8","Mt 16.13-20"]],
+    17:["28/8-3/9",["Sl 26","Jr 15.15-21","Rm 12.9-21","Mt 16.21-28"]],
+    18:["4-10/9",["Sl 32.1-7","Ez 33.7-9","Rm 13.1-10","Mt 18.1-20"]],
+    19:["11-17/9",["Sl 103.1-12","Gn 50.15-21","Rm 14.1-12","Mt 18.21-35"]],
+    20:["18-24/9",["Sl 27.1-9","Is 55.6-9","Fp 1.12-14,19-30","Mt 20.1-16"]],
+    21:["25/9-1/10",["Sl 25.1-10","Ez 18.1-4,25-32","Fp 2.1-4(5-13)14-18","Mt 21.23-27(28-32)"]],
+    22:["2-8/10",["Sl 80.7-19","Is 5.1-7","Fp 3.4b-14","Mt 21.33-46"]],
+    23:["9-15/10",["Sl 23","Is 25.6-9","Fp 4.4-13","Mt 22.1-14"]],
+    24:["16-22/10",["Sl 96.1-9(10-13)","Is 45.1-7","1Ts 1.1-10","Mt 22.15-22"]],
+    25:["23-29/10",["Sl 1","Lv 19.1-2,15-18","1Ts 2.1-13","Mt 22.34-46"]],
+    26:["30/10-5/11",["Sl 43","Mq 3.5-12","1Ts 4.1-12","Mt 23.1-12"]],
+    27:["6-12/11",["Sl 70","Am 5.18-24","1Ts 4.13-18","Mt 25.1-13"]],
+    28:["13-19/11",["Sl 90.1-12","Sf 1.7-16","1Ts 5.1-11","Mt 25.14-30"]],
+    29:["20-26/11",["Sl 95.1-7a","Ez 34.11-16,20-24 [ou Is 65.17-25]","1Co 15.20-28 [ou 2Pe 3.3-13]","Mt 25.31-46"]]
+  }
+},
+B: {
+  advento: [
+    ["Sl 80.1-7","Is 64.1-9","1Co 1.3-9","Mc 11.1-10 ou Mc 13.24-37"],
+    ["Sl 85","Is 40.1-11","2Pe 3.8-14","Mc 1.1-8"],
+    ["Sl 126","Is 61.1-4,8-11","1Ts 5.16-24","Jo 1.6-8,19-28"],
+    ["Sl 89.1-5(19-29)","2Sm 7.1-11,16","Rm 16.25-27","Lc 1.26-38"]
+  ],
+  vespNatal: ["Sl 110.1-4","Is 7.10-14","1Jo 4.7-16","Mt 1.18-25"],
+  diaNatal: ["Sl 2","Is 52.7-10","Hb 1.1-6(7-12)","Jo 1.1-14(15-18)"],
+  natal1: ["Sl 111","Is 61.10-62.3","Gl 4.4-7","Lc 2.22-40"],
+  natal2: ["Sl 119.97-104","1Rs 3.4-15","Ef 1.3-14","Lc 2.40-52"],
+  epifania: ["Sl 72.1-11(12-15)","Is 60.1-6","Ef 3.1-12","Mt 2.1-12"],
+  epifaniaDom: [
+    ["Sl 29","Gn 1.1-5","Rm 6.1-11","Mc 1.4-11"],
+    ["Sl 139.1-10","1Sm 3.1-10(11-20)","1Co 6.12-20","Jo 1.43-51"],
+    ["Sl 62","Jn 3.1-5,10","1Co 7.29-31(32-35)","Mc 1.14-20"],
+    ["Sl 111","Dt 18.15-20","1Co 8.1-13","Mc 1.21-28"],
+    ["Sl 147.1-11","Is 40.21-31","1Co 9.16-27","Mc 1.29-39"],
+    ["Sl 30","2Rs 5.1-14","1Co 10.(19-30)31-11.1","Mc 1.40-45"],
+    ["Sl 41","Is 43.18-25","2Co 1.18-22","Mc 2.1-12"],
+    ["Sl 103.1-13","Os 2.14-20","2Co 2.12-3.6","Mc 2.(13-17)18-22"]
+  ],
+  transfiguracao: ["Sl 50.1-6","2Rs 2.1-12 ou Êx 34.29-35","2Co 3.12-13(14-18);4.1-6","Mc 9.2-9"],
+  cinzas: ["Sl 51.1-13(14-19)","Jl 2.12-19","2Co 5.20b-6.10","Mt 6.1-6,16-21"],
+  quaresma: [
+    ["Sl 25.1-10","Gn 22.1-18","Tg 1.12-18","Mc 1.9-15"],
+    ["Sl 22.23-31","Gn 17.1-7,15-16","Rm 5.1-11","Mc 8.27-38"],
+    ["Sl 19","Êx 20.1-17","1Co 1.18-31","Jo 2.13-22(23-25)"],
+    ["Sl 107.1-9","Nm 21.4-9","Ef 2.1-10","Jo 3.14-21"],
+    ["Sl 119.9-16","Jr 31.31-34","Hb 5.1-10","Mc 10.(32-34)35-45"]
+  ],
+  ramos: ["Sl 118.19-29 ou Sl 31.9-16","Zc 9.9-12","Fp 2.5-11","Mc 14.1-15.47 ou Mc 15.1-47 [ou Mc 11.1-10] ou Jo 12.20-43"],
+  semanaSanta: {
+    seg:["Sl 36.5-10","Is 50.5-10","Hb 9.11-15","Mt 26.1-27.66 ou Jo 12.1-23"],
+    ter:["Sl 71.1-14","Is 49.1-7","1Co 1.18-25(26-31)","Mc 14.1-15.47 ou Jo 12.23-50"],
+    qua:["Sl 70","Is 62.11-63.7","Rm 5.6-11","Lc 22.1-23.56 ou Jo 13.16-38"],
+    quinta:["Sl 116.12-19","Êx 24.3-11","1Co 10.16-17","Mc 14.12-26"],
+    sexta:["Sl 22 ou Sl 31","Is 52.13-53.12","Hb 4.14-16;5.7-9","Jo 18.1-19.42 ou Jo 19.17-30"],
+    sabado:["Sl 16","Dn 6.1-24","1Pe 4.1-8","Mt 27.57-66"]
+  },
+  pascoa: [
+    ["Sl 16","Is 25.6-9","1Co 15.1-11","Mc 16.1-8"],
+    ["Sl 148","At 4.32-35","1Jo 1.1-2.2","Jo 20.19-31"],
+    ["Sl 4","At 3.11-21","1Jo 3.1-7","Lc 24.36-49"],
+    ["Sl 23","At 4.1-12","1Jo 3.16-24","Jo 10.11-18"],
+    ["Sl 150","At 8.26-40","1Jo 4.1-11(12-21)","Jo 15.1-8"],
+    ["Sl 98","At 10.34-48","1Jo 5.1-8","Jo 15.9-17"],
+    ["Sl 1","At 1.12-26","1Jo 5.9-15","Jo 17.11b-19"]
+  ],
+  ascensao: ["Sl 47","At 1.1-11","Ef 1.15-23","Lc 24.44-53"],
+  pentecoste: ["Sl 139.1-12","Ez 37.1-14 [ou Jl 2.29-29]","At 2.1-21","Jo 15.26-27;16.4b-15"],
+  trindade: ["Sl 29","Is 6.1-8","At 2.14a,22-36","Jo 3.1-17"],
+  proprios: {
+    3:["24-28/5",["Sl 103.1-13","Os 2.14-20","At 2.14a,36-47","Mc 2.(13-17)18-22"]],
+    4:["29/5-4/6",["Sl 81.1-10","Dt 5.12-15","2Co 4.5-12","Mc 2.23-28(3.1-6)"]],
+    5:["5-11/6",["Sl 130","Gn 3.8-15","2Co 4.13-5.1","Mc 3.20-35"]],
+    6:["12-18/6",["Sl 1","Ez 17.22-24","2Co 5.1-10(11-17)","Mc 4.26-34"]],
+    7:["19-25/6",["Sl 124","Jó 38.1-11","2Co 6.1-13","Mc 4.35-41"]],
+    8:["26/6-2/7",["Sl 30","Lm 3.22-33","2Co 8.1-9,13-15","Mc 5.21-43"]],
+    9:["3-9/7",["Sl 123","Ez 2.1-5","2Co 12.1-10","Mc 6.1-13"]],
+    10:["10-16/7",["Sl 85.(1-7)8-13","Am 7.7-15","Ef 1.3-14","Mc 6.14-29"]],
+    11:["17-23/7",["Sl 23","Jr 23.1-6","Ef 2.11-22","Mc 6.30-34"]],
+    12:["24-30/7",["Sl 136.1-9","Gn 9.8-17","Ef 3.14-21","Mc 6.45-56"]],
+    13:["31/7-6/8",["Sl 145.10-21","Êx 16.2-15","Ef 4.1-16","Jo 6.22-35"]],
+    14:["7-13/8",["Sl 34.1-8","1Rs 19.1-8","Ef 4.17-5.2","Jo 6.35-51"]],
+    15:["14-20/8",["Sl 34.12-22","Pv 9.1-10 ou Js 24.1-2a,14-18","Ef 5.6-21","Jo 6.51-69"]],
+    16:["21-27/8",["Sl 14","Is 29.11-19","Ef 5.22-33","Mc 7.1-13"]],
+    17:["28/8-3/9",["Sl 119.129-136","Dt 4.1-2,6-9","Ef 6.10-20","Mc 7.14-23"]],
+    18:["4-10/9",["Sl 146","Is 35.4-7a","Tg 2.1-10,14-18","Mc 7.(24-30)31-37"]],
+    19:["11-17/9",["Sl 116.1-9","Is 50.4-10","Tg 3.1-12","Mc 9.14-29"]],
+    20:["18-24/9",["Sl 54","Jr 11.18-20","Tg 3.13-4.10","Mc 9.30-37"]],
+    21:["25/9-1/10",["Sl 104.27-35","Nm 11.4-6,10-16,24-29","Tg 5.(1-12)13-20","Mc 9.38-50"]],
+    22:["2-8/10",["Sl 128","Gn 2.18-25","Hb 2.1-13(14-18)","Mc 10.2-16"]],
+    23:["9-15/10",["Sl 90.12-17","Am 5.6-7,10-15","Hb 3.12-19","Mc 10.17-22"]],
+    24:["16-22/10",["Sl 119.9-16","Ec 5.10-20","Hb 4.1-13(14-16)","Mc 10.23-31"]],
+    25:["23-29/10",["Sl 126","Jr 31.7-9","Hb 7.23-28","Mc 10.46-52"]],
+    26:["30/10-5/11",["Sl 119.1-8","Dt 6.1-9","Hb 9.11-14(15-22)","Mc 12.28-37"]],
+    27:["6-12/11",["Sl 146","1Rs 17.8-16","Hb 9.24-28","Mc 12.38-44"]],
+    28:["13-19/11",["Sl 16","Dn 12.1-3","Hb 10.11-25","Mc 13.1-13"]],
+    29:["20-26/11",["Sl 93","Is 51.4-6 ou Dn 7.9-10,13-14","Jd 20-25 ou Ap 1.4b-8","Mc 13.24-37 ou Jo 18.33-37"]]
+  }
+},
+C: {
+  advento: [
+    ["Sl 25.1-10","Jr 33.14-16","1Ts 3.9-13","Lc 19.28-40 ou Lc 21.25-36"],
+    ["Sl 66.1-12","Ml 3.1-7b","Fp 1.2-11","Lc 3.1-14(15-20)"],
+    ["Sl 85","Sf 3.14-20","Fp 4.4-7","Lc 7.18-28(29-35)"],
+    ["Sl 80.1-7","Mq 5.2-5a","Hb 10.5-10","Lc 1.39-45(46-56)"]
+  ],
+  vespNatal: ["Sl 110.1-4","Is 7.10-14","1Jo 4.7-16","Mt 1.18-25"],
+  diaNatal: ["Sl 2","Is 52.7-10","Hb 1.1-6(7-12)","Jo 1.1-14(15-18)"],
+  natal1: ["Sl 111","Êx 13.1-3a,11-15","Cl 3.12-17","Lc 2.22-40"],
+  natal2: ["Sl 119.97-104","1Rs 3.4-15","Ef 1.3-14","Lc 2.40-52"],
+  epifania: ["Sl 72.1-11(12-15)","Is 60.1-6","Ef 3.1-12","Mt 2.1-12"],
+  epifaniaDom: [
+    ["Sl 29","Is 43.1-7","Rm 6.1-11","Lc 3.15-22"],
+    ["Sl 128","Is 62.1-5","1Co 12.1-11","Jo 2.1-11"],
+    ["Sl 19.(1-6)7-14","Ne 8.1-3,5-6,8-10","1Co 12.12-31a","Lc 4.16-30"],
+    ["Sl 71.1-6(7-11)","Jr 1.4-10(17-19)","1Co 12.31b-13.13","Lc 4.31-44"],
+    ["Sl 138","Is 6.1-8(9-13)","1Co 14.12b-20","Lc 5.1-11"],
+    ["Sl 1","Jr 17.5-8","1Co 15.(1-11)12-20","Lc 6.17-26"],
+    ["Sl 103.1-13","Gn 45.3-15","1Co 15.21-26,30-42","Lc 6.27-38"],
+    ["Sl 92","Jr 7.1-7(8-15)","1Co 15.42-52(53-58)","Lc 6.39-49"]
+  ],
+  transfiguracao: ["Sl 99","Dt 34.1-12","Hb 3.1-6","Lc 9.28-36"],
+  cinzas: ["Sl 51.1-13(14-19)","Jl 2.12-19","2Co 5.20b-6.10","Mt 6.1-6,16-21"],
+  quaresma: [
+    ["Sl 91.1-13","Dt 26.1-11","Rm 10.8b-13","Lc 4.1-13"],
+    ["Sl 4","Jr 26.8-15","Fp 3.17-4.1","Lc 13.31-35"],
+    ["Sl 85","Ez 33.7-20","1Co 10.1-13","Lc 13.1-9"],
+    ["Sl 32","Is 12.1-6","2Co 5.16-21","Lc 15.1-3,11-32"],
+    ["Sl 126","Is 43.16-21","Fp 3.(4b-7)8-14","Lc 20.9-20"]
+  ],
+  ramos: ["Sl 118.19-29 ou Sl 31.9-16","Dt 32.36-39","Fp 2.5-11","Lc 22.1-23.56 ou Lc 23.1-56 [ou Lc 19.28-40] ou Jo 12.20-43"],
+  semanaSanta: {
+    seg:["Sl 36.5-10","Is 50.5-10","Hb 9.11-15","Mt 26.1-27.66 ou Jo 12.1-23"],
+    ter:["Sl 71.1-14","Is 49.1-7","1Co 1.18-25(26-31)","Mc 14.1-15.47 ou Jo 12.23-50"],
+    qua:["Sl 70","Is 62.11-63.7","Rm 5.6-11","Lc 22.1-23.56 ou Jo 13.16-38"],
+    quinta:["Sl 116.12-19","Jr 31.31-34","Hb 10.15-25","Lc 22.7-20"],
+    sexta:["Sl 22 ou Sl 31","Is 52.13-53.12","Hb 4.14-16;5.7-9","Jo 18.1-19.42 ou Jo 19.17-30"],
+    sabado:["Sl 16","Dn 6.1-24","1Pe 4.1-8","Mt 27.57-66"]
+  },
+  pascoa: [
+    ["Sl 16","Is 65.17-25","1Co 15.19-26","Lc 24.1-12"],
+    ["Sl 148","At 5.12-20(21-32)","Ap 1.4-18","Jo 20.19-31"],
+    ["Sl 30","At 9.1-22","Ap 5.(1-7)8-14","Jo 21.1-14(15-19)"],
+    ["Sl 23","At 20.17-35","Ap 7.9-17","Jo 10.22-30"],
+    ["Sl 148","At 11.1-18","Ap 21.1-7","Jo 16.12-22 ou Jo 13.31-35"],
+    ["Sl 67","At 16.9-15","Ap 21.9-14,21-27","Jo 16.23-33 ou Jo 5.1-9"],
+    ["Sl 133","At 1.12-26","Ap 22.1-6(7-11)12-20","Jo 17.20-26"]
+  ],
+  ascensao: ["Sl 47","At 1.1-11","Ef 1.15-23","Lc 24.44-53"],
+  pentecoste: ["Sl 143","Gn 11.1-9 [ou Jl 2.29-29]","At 2.1-21","Jo 14.23-31"],
+  trindade: ["Sl 8","Pv 8.1-4,22-31","At 2.14a,22-36","Jo 8.48-59"],
+  proprios: {
+    3:["24-28/5",["Sl 112.1-9","Gn 50.15-21","At 2.14a,36-47","Lc 6.(20-26)27-42"]],
+    4:["29/5-4/6",["Sl 96.1-9","1Rs 8.22-24,27-29,41-43","Gl 1.1-12","Lc 7.1-10"]],
+    5:["5-11/6",["Sl 30","1Rs 17.17-24","Gl 1.11-24","Lc 7.11-17"]],
+    6:["12-18/6",["Sl 32.1-7","2Sm 11.26-12.10,13-14","Gl 2.15-21;3.10-14","Lc 7.36-8.3"]],
+    7:["19-25/6",["Sl 3","Is 65.1-9","Gl 3.23-4.7","Lc 8.26-39"]],
+    8:["26/6-2/7",["Sl 16","1Rs 19.9b-21","Gl 5.1,13-25","Lc 9.51-62"]],
+    9:["3-9/7",["Sl 66.1-7","Is 66.10-14","Gl 6.1-10,14-18","Lc 10.1-20"]],
+    10:["10-16/7",["Sl 41","Lv (18.1-5);19.9-18","Cl 1.1-14","Lc 10.25-37"]],
+    11:["17-23/7",["Sl 27.(1-6)7-14","Gn 18.1-10a(10b-14)","Cl 1.21-29","Lc 10.38-42"]],
+    12:["24-30/7",["Sl 138","Gn 18.(17-19)20-33","Cl 2.6-15(16-19)","Lc 11.1-13"]],
+    13:["31/7-6/8",["Sl 100","Ec 1.2,12-14;2.18-26","Cl 3.1-11","Lc 12.13-21"]],
+    14:["7-13/8",["Sl 33.12-22","Gn 15.1-6","Hb 11.1-16","Lc 12.22-34(35-40)"]],
+    15:["14-20/8",["Sl 119.81-88","Jr 23.16-29","Hb 11.17-31(32-40);12.1-3","Lc 12.49-53(54-56)"]],
+    16:["21-27/8",["Sl 50.1-15","Is 66.18-23","Hb 12.4-24(25-29)","Lc 13.22-30"]],
+    17:["28/8-3/9",["Sl 131","Pv 25.2-10","Hb 13.1-17","Lc 14.1-14"]],
+    18:["4-10/9",["Sl 1","Dt 30.15-20","Fm 1-21","Lc 14.25-35"]],
+    19:["11-17/9",["Sl 119.169-176","Ez 34.11-24","1Tm 1.(5-11)12-17","Lc 15.1-10"]],
+    20:["18-24/9",["Sl 113","Am 8.4-7","1Tm 2.1-8(9-15)","Lc 16.1-15"]],
+    21:["25/9-1/10",["Sl 146","Am 6.1-7","1Tm 3.1-13 ou 1Tm 6.6-19","Lc 16.19-31"]],
+    22:["2-8/10",["Sl 62","Hc 1.1-4;2.1-4","2Tm 1.1-14","Lc 17.1-10"]],
+    23:["9-15/10",["Sl 111","Rt 1.1-19a","2Tm 2.1-13","Lc 17.11-19"]],
+    24:["16-22/10",["Sl 121","Gn 32.22-30","2Tm 3.14-4.5","Lc 18.1-8"]],
+    25:["23-29/10",["Sl 5","Gn 4.1-15","2Tm 4.6-8,16-18","Lc 18.9-17"]],
+    26:["30/10-5/11",["Sl 130","Is 1.10-18","2Ts 1.1-5(6-10)11-12","Lc 19.1-10"]],
+    27:["6-12/11",["Sl 148","Êx 3.1-15","2Ts 2.1-8,13-17","Lc 20.27-40"]],
+    28:["13-19/11",["Sl 98","Ml 4.1-6","2Ts 3.(1-5)6-13","Lc 21.5-28(29-36)"]],
+    29:["20-26/11",["Sl 46","Ml 3.13-18","Cl 1.13-20","Lc 23.27-43"]]
+  }
+}
+};
+
+const CORES = {
+  "Verde":"var(--verde)","Roxa":"var(--roxa)","Branca":"var(--branca)",
+  "Vermelha":"var(--vermelha)","Escarlate":"var(--escarlate)","Preta":"var(--preta)"
+};
+const CORES_HEX = {
+  "Verde":"#3B6E4F","Roxa":"#5B3A70","Branca":"#C9A227",
+  "Vermelha":"#A32638","Escarlate":"#8C1F2B","Preta":"#232020"
+};
+
+/* ---------- Dias Festivos (data fixa, com leituras — Hinário Luterano IELB) ---------- */
+/* mes: 1-12. leitura: [Salmo, AT, Epístola, Evangelho] */
+const DIAS_FESTIVOS = [
+  {mes:11,dia:30,nome:"André, Apóstolo",cor:"Vermelha",leitura:["Sl 139.1-12","Ez 3.16-21","Rm 10.8b-18","Jo 1.35-42a"]},
+  {mes:12,dia:21,nome:"Tomé, Apóstolo",cor:"Vermelha",leitura:["Sl 136.1-4","Jz 6.36-40","Ef 4.7,11-16","Jo 20.24-29"]},
+  {mes:12,dia:26,nome:"Estêvão, Mártir",cor:"Vermelha",leitura:["Sl 119.137-144","2Cr 24.17-22","At 6.8-7.2a,51-60","Mt 23.34-39"]},
+  {mes:12,dia:27,nome:"João, Apóstolo e Evangelista",cor:"Branca",leitura:["Sl 11","Ap 1.1-6","1Jo 1.1-2.2","Jo 21.20-25"]},
+  {mes:12,dia:28,nome:"Crianças Inocentes, Mártires",cor:"Vermelha",leitura:["Sl 54","Jr 31.15-17","Ap 14.1-5","Mt 2.13-18"]},
+  {mes:12,dia:31,nome:"Véspera de Ano Novo",cor:"Branca",leitura:["Sl 90.1-12","Is 30.(8-14)15-17","Rm 8.31b-39","Lc 12.35-40"]},
+  {mes:1,dia:1,nome:"Circuncisão e Nome de Jesus",cor:"Branca",leitura:["Sl 8","Nm 6.22-27","Gl 3.23-29","Lc 2.21"]},
+  {mes:1,dia:18,nome:"A Confissão de Pedro",cor:"Branca",leitura:["Sl 118.19-29","At 4.8-13","2Pe 1.1-15","Mc 8.27-35(36-9.1)"]},
+  {mes:1,dia:24,nome:"Timóteo, Pastor e Confessor",cor:"Branca",leitura:["Sl 71.15-24","At 16.1-5","1Tm 6.11-16","Mt 24.42-47"]},
+  {mes:1,dia:25,nome:"A Conversão de Paulo",cor:"Branca",leitura:["Sl 67","At 9.1-22","Gl 1.11-24","Mt 19.27-30"]},
+  {mes:1,dia:26,nome:"Tito, Pastor e Confessor",cor:"Branca",leitura:["Sl 71.1-14","At 20.28-35","Tt 1.1-9","Lc 10.1-9"]},
+  {mes:2,dia:2,nome:"A Purificação de Maria e a Apresentação do Senhor",cor:"Branca",leitura:["Sl 84","1Sm 1.21-28","Hb 2.14-18","Lc 2.22-32(33-40)"]},
+  {mes:2,dia:24,nome:"Matias, Apóstolo",cor:"Vermelha",leitura:["Sl 134","Is 66.1-2","At 1.15-26","Mt 11.25-30"]},
+  {mes:3,dia:19,nome:"José, Tutor de Jesus",cor:"Branca",leitura:["Sl 127","2Sm 7.4-16","Rm 4.13-18","Mt 2.13-15,19-23"]},
+  {mes:3,dia:25,nome:"A Anunciação do Senhor",cor:"Branca",leitura:["Sl 45.7-17","Is 7.10-14","Hb 10.4-10","Lc 1.26-38"]},
+  {mes:4,dia:25,nome:"Marcos, Evangelista",cor:"Vermelha",leitura:["Sl 146","Is 52.7-10","2Tm 4.5-18","Mc 16.14-20"]},
+  {mes:5,dia:1,nome:"Filipe e Tiago, Apóstolos",cor:"Vermelha",leitura:["Sl 36.5-12","Is 30.18-21","Ef 2.19-22","Jo 14.1-14"]},
+  {mes:5,dia:31,nome:"A Visitação",cor:"Branca",leitura:["Sl 138","Is 11.1-5","Rm 12.9-16","Lc 1.39-45(46-56)"]},
+  {mes:6,dia:11,nome:"Barnabé, Apóstolo",cor:"Vermelha",leitura:["Sl 112","Is 42.5-12","At 11.19-30;13.1-3","Mc 6.7-13"]},
+  {mes:6,dia:24,nome:"O Nascimento de João Batista",cor:"Branca",leitura:["Sl 85.(1-6)7-13","Is 40.1-5","At 13.13-26","Lc 1.57-80"]},
+  {mes:6,dia:29,nome:"Pedro e Paulo, Apóstolos",cor:"Vermelha",leitura:["Sl 46","At 15.1-12(13-21)","Gl 2.1-10","Mt 16.13-19"]},
+  {mes:7,dia:22,nome:"Maria Madalena",cor:"Branca",leitura:["Sl 73.23-28","Pv 31.10-31","At 13.26-31","Jo 20.1-2,10-18"]},
+  {mes:7,dia:25,nome:"Tiago, o Maior, Apóstolo",cor:"Vermelha",leitura:["Sl 56","At 11.27-12.5","Rm 8.28-39","Mc 10.35-45"]},
+  {mes:8,dia:15,nome:"Maria, Mãe do Senhor",cor:"Branca",leitura:["Sl 45.10-17","Is 61.7-11","Gl 4.4-7","Lc 1.(39-45)46-55"]},
+  {mes:8,dia:24,nome:"Bartolomeu, Apóstolo",cor:"Vermelha",leitura:["Sl 121","Pv 3.1-8","2Co 4.7-10","Lc 22.24-30 ou Jo 1.43-51"]},
+  {mes:8,dia:29,nome:"O Martírio de João Batista",cor:"Vermelha",leitura:["Sl 71.1-8","Ap 6.9-11","Rm 6.1-5","Mc 6.14-29"]},
+  {mes:9,dia:14,nome:"Dia da Santa Cruz",cor:"Vermelha",leitura:["Sl 40.1-11","Nm 21.4-9","1Co 1.18-25","Jo 12.20-33"]},
+  {mes:9,dia:21,nome:"Mateus, Apóstolo e Evangelista",cor:"Vermelha",leitura:["Sl 119.33-40","Ez 2.8-3.11","Ef 4.7-16","Mt 9.9-13"]},
+  {mes:9,dia:29,nome:"São Miguel e Todos os Anjos",cor:"Branca",leitura:["Sl 91","Dn 10.10-14;12.1-3","Ap 12.7-12","Mt 18.1-11 ou Lc 10.17-20"]},
+  {mes:10,dia:18,nome:"Lucas, Evangelista",cor:"Vermelha",leitura:["Sl 147.1-11","Is 35.5-8","2Tm 4.5-18","Lc 10.1-9"]},
+  {mes:10,dia:23,nome:"Tiago de Jerusalém, Irmão de Jesus e Mártir",cor:"Vermelha",leitura:["Sl 133","At 15.12-22a","Tg 1.1-12","Mt 13.54-58"]},
+  {mes:10,dia:28,nome:"Simão e Judas, Apóstolos",cor:"Vermelha",leitura:["Sl 43","Jr 26.1-16","1Pe 1.3-9","Jo 15.(12-16)17-21"]},
+  {mes:10,dia:31,nome:"Dia da Reforma",cor:"Vermelha",leitura:["Sl 46","Ap 14.6-7","Rm 3.19-28","Jo 8.31-36 ou Mt 11.12-19"]},
+  {mes:11,dia:1,nome:"Dia de Todos os Santos",cor:"Branca",leitura:["Sl 149","Ap 7.(2-8)9-17","1Jo 3.1-3","Mt 5.1-12"]},
+  {mes:11,dia:2,nome:"Dia de Finados",cor:"Branca",leitura:["Sl 34.1-9","Is 35.3-10","2Pe 3.8-14,18","Jo 5.24-29"]}
+];
+
+/* ---------- Comemorações (só nome, sem leitura própria — Hinário Luterano IELB) ---------- */
+const COMEMORACOES = {
+  "1-10":"Basílio, o Grande, de Cesareia, Gregório de Nazianzo e Gregório de Niza, Pastores e Confessores",
+  "1-11":"John Hartmeister, Pastor e Fundador do Seminário Concórdia",
+  "1-20":"Sara",
+  "1-27":"João Crisóstomo, Pregador",
+  "2-5":"Jacó (Israel), Patriarca",
+  "2-10":"Silas, Cooperador de Paulo e Pedro",
+  "2-13":"Áquila, Priscila, Apolo",
+  "2-14":"Valentina, Mártir",
+  "2-15":"Filemom e Onésimo",
+  "2-16":"Filipe Melanchthon (Nascimento), Confessor",
+  "2-18":"Martinho Lutero, Doutor em teologia e Confessor",
+  "2-23":"Policarpo de Esmirna, Pastor e Mártir",
+  "3-7":"Perpétua e Felicitas, Mártires",
+  "3-31":"José, Patriarca",
+  "4-6":"Lucas Cranach e Albrecht Dürer, Artistas Sacros",
+  "4-20":"Johannes Bugenhagen, Pastor",
+  "4-24":"Johann Walter, Mestre de capela",
+  "5-2":"Atanásio de Alexandria, Pastor e Confessor",
+  "5-5":"Frederico, o Sábio, Príncipe Eleitor",
+  "5-7":"Carl Ferdinand Wilhelm Walther, Teólogo e Fundador da LCMS",
+  "5-9":"Jó",
+  "5-21":"Constantino, Imperador Cristão",
+  "5-24":"Ester",
+  "6-1":"Justino, Mártir",
+  "6-12":"Concílio de Niceia, AD 325",
+  "6-14":"Eliseu",
+  "6-24":"Fundação da IELB, AD 1904",
+  "6-25":"Apresentação da Confissão de Augsburgo, AD 1530",
+  "6-26":"Jeremias",
+  "6-27":"Cirilo de Alexandria, Pastor e Confessor",
+  "7-6":"Isaías",
+  "7-16":"Rute",
+  "7-20":"Elias",
+  "7-21":"Ezequiel",
+  "7-28":"Johann Sebastian Bach, Mestre de capela",
+  "7-29":"Maria, Marta e Lázaro",
+  "7-31":"José de Arimateia",
+  "8-3":"Joana, Maria e Salomé",
+  "8-16":"Isaque",
+  "8-19":"Bernardo de Clairvaux, Escritor de hinos e Teólogo",
+  "8-20":"Samuel",
+  "8-27":"Mônica, Mãe de Agostinho",
+  "8-28":"Agostinho de Hipona, Pastor e Teólogo",
+  "9-1":"Josué",
+  "9-2":"Ana, Mãe de Samuel",
+  "9-3":"Gregório, o Grande, Pastor",
+  "9-4":"Moisés",
+  "9-5":"Zacarias e Isabel",
+  "9-16":"Cipriano de Cartago, Pastor e Mártir",
+  "9-22":"Jonas",
+  "9-30":"Jerônimo, Tradutor da Sagrada Escritura",
+  "10-9":"Abraão",
+  "10-11":"Filipe, Diácono",
+  "10-25":"Dorcas (Tabita), Lídia e Febe",
+  "10-26":"Philip Nicolai, Johann Heermann e Paul Gerhardt, Escritores de Hinos",
+  "10-27":"Fundação do Seminário Concórdia, AD 1903",
+  "11-8":"Johannes von Staupitz, Conselheiro de Lutero",
+  "11-9":"Martin Chemnitz, Pastor e Confessor",
+  "11-12":"Christian J. Broders, Pastor e Pioneiro da IELB",
+  "11-14":"Justiniano, Imperador e Confessor Cristão",
+  "11-16":"Carl Wilhelm Gustav Mahler, Pastor e Primeiro Presidente da IELB",
+  "11-23":"Clemente de Roma, Pastor",
+  "11-29":"Noé",
+  "12-4":"João de Damasco, Teólogo e Escritor de Hinos",
+  "12-7":"Ambrósio de Milão, Pastor e Escritor de Hinos",
+  "12-17":"Daniel, o Profeta, e Sadraque, Mesaque e Abede-Nego",
+  "12-19":"Adão e Eva",
+  "12-20":"Catarina von Bora, Esposa de Lutero",
+  "12-21":"August Wilhelm Gowert, Pioneiro da IELB",
+  "12-29":"Davi"
+};
+
+function comemoracaoDoDia(date){
+  const key = `${date.getMonth()+1}-${date.getDate()}`;
+  return COMEMORACOES[key] || null;
+}
+
+/* ---------- Texto bíblico (Almeida Atualizada, domínio público) ---------- */
+/* Fonte: raw.githubusercontent.com/MaatheusGois/bible (versions/pt-br/aa) */
+const BOOK_IDS = {
+  "Gn":"gn","Êx":"ex","Ex":"ex","Lv":"lv","Nm":"nm","Dt":"dt","Js":"js","Jz":"jud","Rt":"rt",
+  "1Sm":"1sm","2Sm":"2sm","1Rs":"1kgs","2Rs":"2kgs","1Cr":"1ch","2Cr":"2ch",
+  "Ed":"ezr","Ne":"ne","Et":"et","Jó":"job","Sl":"ps","Pv":"prv","Ec":"ec","Ct":"so",
+  "Is":"is","Jr":"jr","Lm":"lm","Ez":"ez","Dn":"dn","Os":"ho","Jl":"jl","Am":"am","Ob":"ob",
+  "Jn":"jn","Mq":"mi","Na":"na","Hc":"hk","Sf":"zp","Ag":"hg","Zc":"zc","Ml":"ml",
+  "Mt":"mt","Mc":"mk","Lc":"lk","Jo":"jo","At":"act","Rm":"rm","1Co":"1co","2Co":"2co",
+  "Gl":"gl","Ef":"eph","Fp":"ph","Cl":"cl","1Ts":"1ts","2Ts":"2ts","1Tm":"1tm","2Tm":"2tm",
+  "Tt":"tt","Fm":"phm","Hb":"hb","Tg":"jm","1Pe":"1pe","2Pe":"2pe","1Jo":"1jo","2Jo":"2jo",
+  "3Jo":"3jo","Jd":"jd","Ap":"re"
+};
+const SINGLE_CHAPTER_BOOKS = new Set(["Ob","Fm","2Jo","3Jo","Jd"]);
+const bookCache = {};
+const MAX_INLINE_VERSES = 80;
+
+function refPrincipal(ref){
+  return ref.split(" ou ")[0].split(" [ou")[0].trim();
+}
+
+async function fetchBook(bookId){
+  if(bookCache[bookId]) return bookCache[bookId];
+  const url = `https://raw.githubusercontent.com/MaatheusGois/bible/main/versions/pt-br/aa/${bookId}/${bookId}.json`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error("Falha ao buscar "+bookId);
+  const data = await res.json();
+  bookCache[bookId] = data;
+  return data;
+}
+
+function parseRefBlock(book, block){
+  block = block.trim();
+  // caso sem "." — pode ser (a) livro de capítulo único citado só com
+  // versículos (ex.: "Fm 1-21") ou (b) capítulo(s) inteiro(s) de um livro
+  // com vários capítulos (ex.: "Sl 122", "Sl 148-150")
+  if(!block.includes(".")){
+    const nums = [...block.matchAll(/\d+/g)].map(n=>+n[0]);
+    if(!nums.length) return null;
+    if(SINGLE_CHAPTER_BOOKS.has(book)){
+      return {book, c1:1, v1:Math.min(...nums), c2:1, v2:Math.max(...nums)};
+    }
+    return {book, c1:Math.min(...nums), v1:1, c2:Math.max(...nums), v2:null};
+  }
+  // caso capítulo cruzado: "26.1-27.66" ou "1.1-2.4a"
+  let m = block.match(/^(\d+)\.(\d+)[a-c]?\s*-\s*(\d+)\.(\d+)[a-c]?/);
+  if(m) return {book, c1:+m[1], v1:+m[2], c2:+m[3], v2:+m[4]};
+  // caso normal: capítulo único, versículos com parênteses/vírgulas
+  m = block.match(/^(\d+)\.(.+)$/);
+  if(!m) return null;
+  const chapter = +m[1];
+  const nums = [...m[2].matchAll(/\d+/g)].map(n=>+n[0]);
+  if(!nums.length) return null;
+  return {book, c1:chapter, v1:Math.min(...nums), c2:chapter, v2:Math.max(...nums)};
+}
+
+function parseReading(refRaw){
+  const ref = refPrincipal(refRaw);
+  const blocks = ref.split(";");
+  let currentBook = null;
+  const parts = [];
+  for(const rawBlock of blocks){
+    const trimmed = rawBlock.trim();
+    const m = trimmed.match(/^(\d?[A-Za-zÀ-ÿ]+)\s+(.+)$/);
+    let book, rest;
+    if(m && BOOK_IDS[m[1]]){
+      book = m[1]; rest = m[2]; currentBook = book;
+    } else if(currentBook){
+      book = currentBook; rest = trimmed;
+    } else {
+      continue;
+    }
+    const parsed = parseRefBlock(book, rest);
+    if(parsed) parts.push(parsed);
+  }
+  return parts;
+}
+
+function totalVerses(parts){
+  return parts.reduce((sum,p)=>{
+    if(p.v2===null) return sum + 25*(p.c2-p.c1+1); // capítulo(s) inteiro(s), estimativa
+    if(p.c1===p.c2) return sum + (p.v2-p.v1+1);
+    // aproximação grosseira para intervalos entre capítulos
+    return sum + 40*(p.c2-p.c1) + p.v2;
+  },0);
+}
+
+async function renderTexto(container, refRaw){
+  container.className = "texto carregando";
+  container.textContent = "Carregando texto…";
+  try{
+    const parts = parseReading(refRaw);
+    if(!parts.length) throw new Error("Referência não reconhecida");
+    if(totalVerses(parts) > MAX_INLINE_VERSES){
+      container.className = "texto erro";
+      container.textContent = "Leitura extensa — use o link abaixo para o texto completo.";
+      return;
+    }
+    let html = "";
+    for(const part of parts){
+      const bookId = BOOK_IDS[part.book];
+      if(!bookId) throw new Error("Livro não mapeado: "+part.book);
+      const data = await fetchBook(bookId);
+      for(let c=part.c1; c<=part.c2; c++){
+        const chapterVerses = data.chapters[c-1];
+        if(!chapterVerses) continue;
+        const startV = (c===part.c1) ? part.v1 : 1;
+        const endV = (c===part.c2 && part.v2!==null) ? Math.min(part.v2, chapterVerses.length) : chapterVerses.length;
+        for(let v=startV; v<=endV; v++){
+          const texto = chapterVerses[v-1];
+          if(!texto) continue;
+          html += `<span class="vnum">${v}</span>${texto} `;
+        }
+      }
+    }
+    if(!html){
+      container.className = "texto erro";
+      container.textContent = "Não foi possível localizar o texto — use o link abaixo.";
+      return;
+    }
+    container.className = "texto";
+    container.innerHTML = html.trim();
+  }catch(err){
+    container.className = "texto erro";
+    container.textContent = "Não foi possível carregar o texto agora — use o link abaixo.";
+  }
+}
+
+/* ---------- Utilidades de data ---------- */
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function sameYMD(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+function ymdKey(d){return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();}
+
+function computeEaster(year){
+  // Algoritmo de Meeus/Jones/Butcher (calendário gregoriano)
+  const a=year%19, b=Math.floor(year/100), c=year%100;
+  const d=Math.floor(b/4), e=b%4, f=Math.floor((b+8)/25);
+  const g=Math.floor((b-f+1)/3), h=(19*a+b-d-g+15)%30;
+  const i=Math.floor(c/4), k=c%4, l=(32+2*e+2*i-h-k)%7;
+  const m=Math.floor((a+11*h+22*l)/451);
+  const month=Math.floor((h+l-7*m+114)/31);
+  const day=((h+l-7*m+114)%31)+1;
+  return new Date(year, month-1, day);
+}
+
+function adventFirstSunday(year){
+  const nov30=new Date(year,10,30);
+  const dow=nov30.getDay(); // 0=domingo
+  let offset=(0-dow+7)%7;
+  if(offset>3) offset-=7;
+  return addDays(nov30,offset);
+}
+
+function sundaysBetween(startExclusive, endExclusive){
+  // retorna lista de domingos estritamente entre as duas datas
+  let d=new Date(startExclusive);
+  d=addDays(d,1);
+  while(d.getDay()!==0) d=addDays(d,1);
+  const out=[];
+  while(d<endExclusive){
+    out.push(new Date(d));
+    d=addDays(d,7);
+  }
+  return out;
+}
+
+function cycleLetter(adventYear){
+  const rem=(adventYear+1)%3;
+  return rem===1?"A":rem===2?"B":"C";
+}
+
+/* ---------- Monta a lista de âncoras do ano eclesiástico corrente ---------- */
+function buildAnchors(adventYear){
+  const easterYear=adventYear+1;
+  const letra=cycleLetter(adventYear);
+  const R=CYCLES[letra];
+  const easter=computeEaster(easterYear);
+  const advent1=adventFirstSunday(adventYear);
+  const christmasEve=new Date(adventYear,11,24);
+  const christmasDay=new Date(adventYear,11,25);
+  const epiphany=new Date(easterYear,0,6);
+  const ashWednesday=addDays(easter,-46);
+  const palmSunday=addDays(easter,-7);
+  const ascension=addDays(easter,39);
+  const pentecost=addDays(easter,49);
+  const trinity=addDays(pentecost,7);
+
+  const anchors=[];
+  const push=(date,cor,nomeDia,periodo,leitura)=>anchors.push({date,cor,nomeDia,periodo,leitura});
+
+  // Advento
+  R.advento.forEach((leitura,idx)=>{
+    push(addDays(advent1,idx*7),"Roxa",`${idx+1}º Domingo do Advento`,`Tempo do Advento · Ciclo ${letra}`,leitura);
+  });
+
+  push(christmasEve,"Branca","Véspera de Natal","Tempo de Natal",R.vespNatal);
+  push(christmasDay,"Branca","O Nascimento do Senhor","Tempo de Natal",R.diaNatal);
+
+  const domNatal=sundaysBetween(christmasDay, epiphany);
+  if(domNatal[0]) push(domNatal[0],"Branca","1º Domingo após o Natal","Tempo de Natal",R.natal1);
+  if(domNatal[1]) push(domNatal[1],"Branca","2º Domingo após o Natal","Tempo de Natal",R.natal2);
+
+  push(epiphany,"Branca","A Epifania do Senhor","Tempo de Epifania",R.epifania);
+
+  const domEpifania=sundaysBetween(epiphany, ashWednesday);
+  domEpifania.forEach((d,idx)=>{
+    const ultimo = idx===domEpifania.length-1;
+    if(ultimo){
+      push(d,"Branca","Transfiguração do Senhor","Último Domingo após Epifania",R.transfiguracao);
+    } else if(R.epifaniaDom[idx]){
+      const nome = idx===0?"1º Domingo após Epifania · Batismo do Senhor":`${idx+1}º Domingo após Epifania`;
+      push(d,"Verde",nome,"Tempo de Epifania",R.epifaniaDom[idx]);
+    }
+  });
+
+  push(ashWednesday,"Roxa","Quarta-feira de Cinzas","Início da Quaresma",R.cinzas);
+  R.quaresma.forEach((leitura,idx)=>{
+    push(addDays(ashWednesday,7*(idx+1)-3),"Roxa",`${idx+1}º Domingo na Quaresma`,`Tempo da Quaresma · Ciclo ${letra}`,leitura);
+  });
+  // nota: 1º domingo na quaresma é o domingo seguinte à quarta de cinzas (4 dias depois)
+  // ajuste: recalcular corretamente abaixo
+
+  push(palmSunday,"Escarlate","Domingo de Ramos","Semana Santa",R.ramos);
+  push(addDays(palmSunday,1),"Escarlate","Segunda-feira na Semana Santa","Semana Santa",R.semanaSanta.seg);
+  push(addDays(palmSunday,2),"Escarlate","Terça-feira na Semana Santa","Semana Santa",R.semanaSanta.ter);
+  push(addDays(palmSunday,3),"Escarlate","Quarta-feira na Semana Santa","Semana Santa",R.semanaSanta.qua);
+  push(addDays(palmSunday,4),"Branca","Quinta-feira Santa","Semana Santa",R.semanaSanta.quinta);
+  push(addDays(palmSunday,5),"Preta","Sexta-feira Santa","Semana Santa",R.semanaSanta.sexta);
+  push(addDays(palmSunday,6),"Preta","Sábado de Aleluia","Semana Santa",R.semanaSanta.sabado);
+
+  push(easter,"Branca","A Ressurreição do Senhor","Tempo de Páscoa",R.pascoa[0]);
+  for(let n=2;n<=7;n++){
+    push(addDays(easter,7*(n-1)),"Branca",`${n}º Domingo de Páscoa`,`Tempo de Páscoa · Ciclo ${letra}`,R.pascoa[n-1]);
+  }
+  push(ascension,"Branca","A Ascensão do Senhor","Tempo de Páscoa",R.ascensao);
+  push(pentecost,"Vermelha","Pentecostes","Dia de Pentecostes",R.pentecoste);
+  push(trinity,"Branca","A Santíssima Trindade","Início do Tempo da Igreja",R.trindade);
+
+  Object.keys(R.proprios).forEach(num=>{
+    const [janela,leitura]=R.proprios[num];
+    const doms=sundaysInWindow(easterYear, janela);
+    doms.forEach(d=>{
+      // só usa o Próprio se cair depois da Santíssima Trindade (evita colisão
+      // com Pentecostes/Trindade em anos de Páscoa adiantada)
+      if(d>trinity) push(d,"Verde",`Próprio ${num}`,`Tempo da Igreja · Ciclo ${letra}`,leitura);
+    });
+  });
+
+  // ---------- Dias Festivos de data fixa ----------
+  const anchorDates = new Set(anchors.map(a=>ymdKey(a.date)));
+  DIAS_FESTIVOS.forEach(f=>{
+    // Nov/Dez pertencem ao início do ano eclesiástico (adventYear); o resto, ao easterYear
+    const ano = (f.mes>=11) ? adventYear : easterYear;
+    const data = new Date(ano, f.mes-1, f.dia);
+    const key = ymdKey(data);
+    if(anchorDates.has(key)) return; // não sobrepõe domingo/festa móvel já existente
+    anchorDates.add(key);
+    push(data, f.cor, f.nome, "Dia Festivo", f.leitura);
+  });
+
+  anchors.sort((a,b)=>a.date-b.date);
+  return {anchors, letra, easterYear};
+}
+
+// corrige quaresma: recomputa corretamente (1º domingo = 4 dias após cinzas)
+function fixLentAnchors(anchorsObj){
+  return anchorsObj;
+}
+
+function sundaysInWindow(year, janela){
+  // janela ex: "24-28/5" ou "31/7-6/8" ou "30/10 e 5/11" -> devolve domingo(s) daquele intervalo
+  const doms=[];
+  const parts=janela.split(" e ").map(s=>s.trim());
+  parts.forEach(part=>{
+    let start,end;
+    if(part.includes("-")){
+      const [a,b]=part.split("-");
+      const bParts=b.split("/");
+      const endMonth=parseInt(bParts[1],10);
+      const endDay=parseInt(bParts[0].replace("º",""),10);
+      let startDay, startMonth;
+      if(a.includes("/")){
+        const aParts=a.split("/");
+        startDay=parseInt(aParts[0].replace("º",""),10);
+        startMonth=parseInt(aParts[1],10);
+      } else {
+        startDay=parseInt(a.replace("º",""),10);
+        startMonth=endMonth;
+      }
+      start=new Date(year,startMonth-1,startDay);
+      end=new Date(year,endMonth-1,endDay);
+    } else {
+      const [d,m]=part.split("/");
+      start=end=new Date(year,parseInt(m,10)-1,parseInt(d.replace("º",""),10));
+    }
+    let cur=new Date(start);
+    while(cur<=end){
+      if(cur.getDay()===0) doms.push(new Date(cur));
+      cur=addDays(cur,1);
+    }
+  });
+  return doms;
+}
+
+/* recompute lent Sundays correctly: rebuild after ash wednesday */
+function buildAnchorsFixed(adventYear){
+  const {anchors, letra, easterYear} = buildAnchors(adventYear);
+  return {anchors, letra, easterYear};
+}
+
+/* ---------- Resolve o dia de hoje ---------- */
+function resolveToday(today){
+  const Y=today.getFullYear();
+  const advent1ThisY=adventFirstSunday(Y);
+  let adventYear = today>=advent1ThisY ? Y : Y-1;
+
+  let {anchors, letra} = buildAnchorsFixed(adventYear);
+
+  let chosen=null;
+  let ehDiaProprio=false;
+  for(const a of anchors){
+    if(a.date<=today){
+      chosen=a;
+      ehDiaProprio = sameDate(a.date, today);
+    } else break;
+  }
+  if(!chosen){ chosen=anchors[0]; ehDiaProprio=false; }
+  return {chosen, letra, ehDiaProprio};
+}
+
+/* ---------- Render ---------- */
+const MESES=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+const DIAS=["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
+
+function formatarDataExtenso(d){
+  return `${DIAS[d.getDay()]}, ${d.getDate()} de ${MESES[d.getMonth()]} de ${d.getFullYear()}`;
+}
+
+const LABELS=["Salmo","Antigo Testamento","Epístola","Evangelho"];
+
+function bibleGatewayLink(ref){
+  const limpo=refPrincipal(ref);
+  return `https://www.biblegateway.com/passage/?search=${encodeURIComponent(limpo)}&version=ARC`;
+}
+
+function sameDate(a,b){
+  return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+}
+
+/* data em exibição — começa em hoje e pode ser navegada */
+let viewDate = new Date();
+viewDate.setHours(0,0,0,0);
+
+function montarPagina(){
+  const hoje = new Date();
+  hoje.setHours(0,0,0,0);
+  const ehHoje = sameDate(viewDate, hoje);
+
+  document.getElementById("dataHoje").textContent = formatarDataExtenso(viewDate);
+  document.getElementById("btnHoje").style.display = ehHoje ? "none" : "inline-flex";
+
+  const {chosen, letra, ehDiaProprio}=resolveToday(viewDate);
+
+  const corHex = CORES_HEX[chosen.cor] || CORES_HEX["Verde"];
+  document.documentElement.style.setProperty("--cor", corHex);
+  document.documentElement.style.setProperty("--cor-soft", corHex + "24");
+
+  document.getElementById("corNome").textContent=chosen.cor;
+  document.getElementById("corBadgeLabel").textContent=`Cor litúrgica: ${chosen.cor}`;
+  document.getElementById("cicloLetra").textContent=letra;
+  document.getElementById("semanaTxt").textContent=chosen.periodo;
+  document.getElementById("seal").style.background=
+    `radial-gradient(circle at 35% 25%, rgba(255,255,255,.12), ${corHex} 78%)`;
+
+  const comemoracao = comemoracaoDoDia(viewDate);
+  const card=document.getElementById("cardLeituras");
+  card.innerHTML="";
+
+  if(ehDiaProprio){
+    document.getElementById("nomeDia").textContent=chosen.nomeDia;
+    document.getElementById("periodoNome").textContent=chosen.periodo +
+      (comemoracao ? ` · Comemora-se também: ${comemoracao}` : "");
+
+    chosen.leitura.forEach((ref,idx)=>{
+      const div=document.createElement("div");
+      div.className="reading";
+      div.innerHTML=`
+        <div class="label">${LABELS[idx]}</div>
+        <div class="ref">${ref}</div>
+        <div class="texto carregando">Carregando texto…</div>
+        <div class="actions">
+          <button data-ref="${ref.replace(/"/g,'&quot;')}">Copiar referência</button>
+          <a class="link-btn" target="_blank" rel="noopener" href="${bibleGatewayLink(ref)}">Ler em outra versão ↗</a>
+        </div>`;
+      card.appendChild(div);
+      renderTexto(div.querySelector(".texto"), ref);
+    });
+
+    card.querySelectorAll("button[data-ref]").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        navigator.clipboard.writeText(btn.getAttribute("data-ref")).then(()=>{
+          btn.textContent="Copiado ✓";
+          btn.classList.add("copiado");
+          setTimeout(()=>{btn.textContent="Copiar referência";btn.classList.remove("copiado");},1600);
+        });
+      });
+    });
+  } else {
+    document.getElementById("nomeDia").textContent=chosen.periodo;
+    document.getElementById("periodoNome").textContent=comemoracao ? `Comemora-se: ${comemoracao}` : "";
+
+    const div=document.createElement("div");
+    div.className="reading vazio";
+    div.innerHTML=`
+      <div class="label">Sem leitura própria hoje</div>
+      <p class="vazio-texto">
+        Este dia não tem leituras próprias no lecionário. A última leitura foi em
+        <strong>${chosen.nomeDia}</strong>, ${formatarDataExtenso(chosen.date)}.
+      </p>
+      <div class="actions">
+        <button id="btnVerUltima">Ver leituras de ${chosen.nomeDia}</button>
+      </div>`;
+    card.appendChild(div);
+    document.getElementById("btnVerUltima").addEventListener("click",()=>{
+      viewDate = new Date(chosen.date);
+      montarPagina();
+    });
+  }
+
+  document.querySelector(".toolbar").style.display = ehDiaProprio ? "flex" : "none";
+}
+
+document.getElementById("btnCopiarTudo").addEventListener("click",()=>{
+  const {chosen, ehDiaProprio}=resolveToday(viewDate);
+  if(!ehDiaProprio) return;
+  const todas=chosen.leitura.map((r,i)=>`${LABELS[i]}: ${r}`).join("\n");
+  navigator.clipboard.writeText(`${chosen.nomeDia}\n${todas}`).then(()=>{
+    const b=document.getElementById("btnCopiarTudo");
+    b.textContent="Copiado ✓";
+    setTimeout(()=>b.textContent="Copiar todas as referências",1600);
+  });
+});
+
+document.getElementById("btnAnterior").addEventListener("click",()=>{
+  viewDate = addDays(viewDate,-1);
+  montarPagina();
+});
+document.getElementById("btnProximo").addEventListener("click",()=>{
+  viewDate = addDays(viewDate,1);
+  montarPagina();
+});
+document.getElementById("btnHoje").addEventListener("click",()=>{
+  viewDate = new Date();
+  viewDate.setHours(0,0,0,0);
+  montarPagina();
+});
+
+montarPagina();
+</script>
+</body>
+</html>
