@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Dies Sanctus — Liturgia do Dia</title>
+<title>Dies Sanctus</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
 <style>
@@ -25,6 +25,7 @@
     --vermelha:#A32638;
     --escarlate:#8C1F2B;
     --preta:#232020;
+    --azul:#2f3bad;
     --cor: var(--gold);
     --cor-soft: rgba(184,146,59,0.14);
   }
@@ -32,10 +33,6 @@
   html,body{margin:0;padding:0;}
   html{-webkit-text-size-adjust:100%; overscroll-behavior-y:contain;}
   body{
-    background:
-      radial-gradient(circle at 15% -5%, var(--cor-soft), transparent 45%),
-      radial-gradient(circle at 100% 100%, var(--cor-soft), transparent 42%),
-      var(--parchment);
     color:var(--ink);
     font-family:'Source Serif 4', serif;
     min-height:100vh;
@@ -48,6 +45,22 @@
     overscroll-behavior-y:contain;
     -webkit-user-select:none;
     user-select:none;
+    position:relative;
+    color:var(--ink);
+    
+  }
+
+  /* Fixed decorative background layer tied to the viewport */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    pointer-events:none;
+    background:
+      radial-gradient(circle at 15% -5%, var(--cor-soft), transparent 45%),
+      radial-gradient(circle at 100% 100%, var(--cor-soft), transparent 42%),
+      var(--parchment);
   }
   .reading .texto, .reading .ref, .vazio-texto{
     -webkit-user-select:text;
@@ -163,7 +176,7 @@
       0 -6px 14px rgba(0,0,0,.18) inset,
       0 10px 30px -6px var(--cor);
     position:relative;
-    transform:rotate(-3deg);
+    transform:rotate(0deg);
     transition:box-shadow .4s ease;
   }
   .seal::after{
@@ -174,14 +187,14 @@
     border:1px dashed rgba(255,255,255,.35);
   }
   .seal .cor-nome{
-    font-size:.62rem;
+    font-size:.68rem;
     letter-spacing:.14em;
     text-transform:uppercase;
     opacity:.95;
     text-shadow:0 1px 3px rgba(0,0,0,.5);
   }
   .seal .ciclo{
-    font-size:2.1rem;
+    font-size:2.5rem;
     font-weight:600;
     line-height:1;
     margin:2px 0;
@@ -355,7 +368,7 @@
 
   .rodape{
     text-align:center;
-    margin-top:52px;
+    margin-top:25px;
     font-size:.72rem;
     letter-spacing:.06em;
     text-transform:uppercase;
@@ -399,7 +412,7 @@
 
   <div class="day-nav">
     <button id="btnAnterior" aria-label="Dia anterior">← Dia anterior</button>
-    <button id="btnHoje" class="voltar-hoje" style="display:none;">Voltar para hoje</button>
+    <button id="btnHoje" class="voltar-hoje" style="display:none;">Hoje</button>
     <button id="btnProximo" aria-label="Próximo dia">Próximo dia →</button>
   </div>
 
@@ -416,20 +429,13 @@
 
   <div class="card" id="cardLeituras"></div>
 
-  <div class="toolbar">
-    <button id="btnCopiarTudo">Copiar todas as referências</button>
-  </div>
+  <div class="toolbar"></div>
 
   <p class="aviso">
-    As referências seguem o lecionário do <em>Hinário Luterano (IELB)</em>: domingos e dias móveis do
-    lecionário trienal, dias festivos de data fixa (com leituras próprias) e comemorações (sem leituras
-    — apenas citadas no dia). Dias sem leitura própria mostram a última leitura disponível. O texto
-    bíblico exibido é da <em>Almeida Atualizada</em>, tradução em domínio público — não a NTLH, cujos
-    direitos autorais pertencem à Sociedade Bíblica do Brasil. Leituras muito extensas (como a Paixão)
-    podem aparecer apenas como link.
+    Lecionário do <em>Hinário Luterano (IELB)</em>. Texto Bíblico da <em>Almeida Atualizada</em>.
   </p>
 
-  <div class="rodape" id="rodape">Calculado automaticamente a partir da data de hoje</div>
+  <div class="rodape" id="rodape">Dies Sanctus</div>
 </div>
 
 <script>
@@ -686,11 +692,11 @@ C: {
 
 const CORES = {
   "Verde":"var(--verde)","Roxa":"var(--roxa)","Branca":"var(--branca)",
-  "Vermelha":"var(--vermelha)","Escarlate":"var(--escarlate)","Preta":"var(--preta)"
+  "Vermelha":"var(--vermelha)","Escarlate":"var(--escarlate)","Preta":"var(--preta)","Azul":"var(--azul)"
 };
 const CORES_HEX = {
   "Verde":"#3B6E4F","Roxa":"#5B3A70","Branca":"#C9A227",
-  "Vermelha":"#A32638","Escarlate":"#8C1F2B","Preta":"#232020"
+  "Vermelha":"#A32638","Escarlate":"#8C1F2B","Preta":"#232020","Azul":"#2f3bad"
 };
 
 /* ---------- Dias Festivos (data fixa, com leituras — Hinário Luterano IELB) ---------- */
@@ -1004,7 +1010,7 @@ function buildAnchors(adventYear){
 
   // Advento
   R.advento.forEach((leitura,idx)=>{
-    push(addDays(advent1,idx*7),"Roxa",`${idx+1}º Domingo do Advento`,`Tempo do Advento · Ciclo ${letra}`,leitura);
+    push(addDays(advent1,idx*7),"Azul",`${idx+1}º Domingo do Advento`,`Tempo do Advento`,leitura);
   });
 
   push(christmasEve,"Branca","Véspera de Natal","Tempo de Natal",R.vespNatal);
@@ -1020,16 +1026,16 @@ function buildAnchors(adventYear){
   domEpifania.forEach((d,idx)=>{
     const ultimo = idx===domEpifania.length-1;
     if(ultimo){
-      push(d,"Branca","Transfiguração do Senhor","Último Domingo após Epifania",R.transfiguracao);
+      push(d,"Branca","Transfiguração do Senhor","Tempo de Epifania",R.transfiguracao);
     } else if(R.epifaniaDom[idx]){
-      const nome = idx===0?"1º Domingo após Epifania · Batismo do Senhor":`${idx+1}º Domingo após Epifania`;
+      const nome = idx===0?"Batismo do Senhor":`${idx+1}º Domingo após Epifania`;
       push(d,"Verde",nome,"Tempo de Epifania",R.epifaniaDom[idx]);
     }
   });
 
-  push(ashWednesday,"Roxa","Quarta-feira de Cinzas","Início da Quaresma",R.cinzas);
+  push(ashWednesday,"Roxa","Quarta-feira de Cinzas",`Tempo da Quaresma`,R.cinzas);
   R.quaresma.forEach((leitura,idx)=>{
-    push(addDays(ashWednesday,7*(idx+1)-3),"Roxa",`${idx+1}º Domingo na Quaresma`,`Tempo da Quaresma · Ciclo ${letra}`,leitura);
+    push(addDays(ashWednesday,7*(idx+1)-3),"Roxa",`${idx+1}º Domingo na Quaresma`,`Tempo da Quaresma`,leitura);
   });
   // nota: 1º domingo na quaresma é o domingo seguinte à quarta de cinzas (4 dias depois)
   // ajuste: recalcular corretamente abaixo
@@ -1044,11 +1050,12 @@ function buildAnchors(adventYear){
 
   push(easter,"Branca","A Ressurreição do Senhor","Tempo de Páscoa",R.pascoa[0]);
   for(let n=2;n<=7;n++){
-    push(addDays(easter,7*(n-1)),"Branca",`${n}º Domingo de Páscoa`,`Tempo de Páscoa · Ciclo ${letra}`,R.pascoa[n-1]);
+    push(addDays(easter,7*(n-1)),"Branca",`${n}º Domingo de Páscoa`,`Tempo de Páscoa`,R.pascoa[n-1]);
   }
   push(ascension,"Branca","A Ascensão do Senhor","Tempo de Páscoa",R.ascensao);
-  push(pentecost,"Vermelha","Pentecostes","Dia de Pentecostes",R.pentecoste);
-  push(trinity,"Branca","A Santíssima Trindade","Início do Tempo da Igreja",R.trindade);
+  push(pentecost,"Vermelha","Pentecostes","Tempo de Páscoa",R.pentecoste);
+  push(addDays(pentecost,1),"Verde","Tempo Comum","Tempo Comum",[]);
+  push(trinity,"Branca","A Santíssima Trindade","Tempo Comum",R.trindade);
 
   Object.keys(R.proprios).forEach(num=>{
     const [janela,leitura]=R.proprios[num];
@@ -1056,7 +1063,7 @@ function buildAnchors(adventYear){
     doms.forEach(d=>{
       // só usa o Próprio se cair depois da Santíssima Trindade (evita colisão
       // com Pentecostes/Trindade em anos de Páscoa adiantada)
-      if(d>trinity) push(d,"Verde",`Próprio ${num}`,`Tempo da Igreja · Ciclo ${letra}`,leitura);
+      if(d>trinity) push(d,"Verde",`Próprio ${num}`,`Tempo Comum`,leitura);
     });
   });
 
@@ -1131,13 +1138,25 @@ function resolveToday(today){
   let {anchors, letra} = buildAnchorsFixed(adventYear);
 
   let chosen=null;
+  let seasonAnchor=null;
   let ehDiaProprio=false;
+
   for(const a of anchors){
     if(a.date<=today){
       chosen=a;
+      // Track the last non-festive anchor to use as season fallback
+      if(a.periodo !== "Dia Festivo"){
+        seasonAnchor=a;
+      }
       ehDiaProprio = sameDate(a.date, today);
     } else break;
   }
+
+  // If today is not a specific feast day, fallback to the current season anchor
+  if(!ehDiaProprio && seasonAnchor){
+    chosen = seasonAnchor;
+  }
+
   if(!chosen){ chosen=anchors[0]; ehDiaProprio=false; }
   return {chosen, letra, ehDiaProprio};
 }
@@ -1177,20 +1196,23 @@ function montarPagina(){
 
   const corHex = CORES_HEX[chosen.cor] || CORES_HEX["Verde"];
   document.documentElement.style.setProperty("--cor", corHex);
-  document.documentElement.style.setProperty("--cor-soft", corHex + "24");
+  document.documentElement.style.setProperty("--cor-soft", corHex + "55");
+  // Background is rendered on the fixed `body::before` layer using
+  // the CSS variables `--cor-soft` and `--parchment`, so no inline body
+  // background updates are necessary here.
 
-  document.getElementById("corNome").textContent=chosen.cor;
+  document.getElementById("corNome").textContent="ciclo";
   document.getElementById("corBadgeLabel").textContent=`Cor litúrgica: ${chosen.cor}`;
   document.getElementById("cicloLetra").textContent=letra;
-  document.getElementById("semanaTxt").textContent=chosen.periodo;
+  document.getElementById("semanaTxt").textContent="";
   document.getElementById("seal").style.background=
-    `radial-gradient(circle at 35% 25%, rgba(255,255,255,.12), ${corHex} 78%)`;
+    `radial-gradient(circle at 15% 20%, rgba(255,255,255,.12), ${corHex} 60%)`;
 
   const comemoracao = comemoracaoDoDia(viewDate);
   const card=document.getElementById("cardLeituras");
   card.innerHTML="";
 
-  if(ehDiaProprio){
+  if(ehDiaProprio && chosen.leitura && chosen.leitura.length > 0){
     document.getElementById("nomeDia").textContent=chosen.nomeDia;
     document.getElementById("periodoNome").textContent=chosen.periodo +
       (comemoracao ? ` · Comemora-se também: ${comemoracao}` : "");
@@ -1202,9 +1224,8 @@ function montarPagina(){
         <div class="label">${LABELS[idx]}</div>
         <div class="ref">${ref}</div>
         <div class="texto carregando">Carregando texto…</div>
-        <div class="actions">
-          <button data-ref="${ref.replace(/"/g,'&quot;')}">Copiar referência</button>
-          <a class="link-btn" target="_blank" rel="noopener" href="${bibleGatewayLink(ref)}">Ler em outra versão ↗</a>
+        <div class="actions" style="display: flex; justify-content: center; gap: 12px; align-items: center;">
+          <button data-ref="${ref.replace(/"/g,'&quot;')}">Copiar texto</button>
         </div>`;
       card.appendChild(div);
       renderTexto(div.querySelector(".texto"), ref);
@@ -1212,10 +1233,12 @@ function montarPagina(){
 
     card.querySelectorAll("button[data-ref]").forEach(btn=>{
       btn.addEventListener("click",()=>{
-        navigator.clipboard.writeText(btn.getAttribute("data-ref")).then(()=>{
+        const textElement = btn.closest(".reading").querySelector(".texto");
+        const textToCopy = textElement.textContent;
+        navigator.clipboard.writeText(textToCopy).then(()=>{
           btn.textContent="Copiado ✓";
           btn.classList.add("copiado");
-          setTimeout(()=>{btn.textContent="Copiar referência";btn.classList.remove("copiado");},1600);
+          setTimeout(()=>{btn.textContent="Copiar texto";btn.classList.remove("copiado");},1600);
         });
       });
     });
@@ -1228,11 +1251,11 @@ function montarPagina(){
     div.innerHTML=`
       <div class="label">Sem leitura própria hoje</div>
       <p class="vazio-texto">
-        Este dia não tem leituras próprias no lecionário. A última leitura foi em
-        <strong>${chosen.nomeDia}</strong>, ${formatarDataExtenso(chosen.date)}.
+        Este dia não tem leituras próprias no lecionário. A última leitura foi:
+        <strong>${chosen.nomeDia}</strong>.
       </p>
-      <div class="actions">
-        <button id="btnVerUltima">Ver leituras de ${chosen.nomeDia}</button>
+      <div class="actions" style="display: flex; justify-content: center;">
+        <button id="btnVerUltima">Ver ${chosen.nomeDia}</button>
       </div>`;
     card.appendChild(div);
     document.getElementById("btnVerUltima").addEventListener("click",()=>{
@@ -1243,17 +1266,6 @@ function montarPagina(){
 
   document.querySelector(".toolbar").style.display = ehDiaProprio ? "flex" : "none";
 }
-
-document.getElementById("btnCopiarTudo").addEventListener("click",()=>{
-  const {chosen, ehDiaProprio}=resolveToday(viewDate);
-  if(!ehDiaProprio) return;
-  const todas=chosen.leitura.map((r,i)=>`${LABELS[i]}: ${r}`).join("\n");
-  navigator.clipboard.writeText(`${chosen.nomeDia}\n${todas}`).then(()=>{
-    const b=document.getElementById("btnCopiarTudo");
-    b.textContent="Copiado ✓";
-    setTimeout(()=>b.textContent="Copiar todas as referências",1600);
-  });
-});
 
 document.getElementById("btnAnterior").addEventListener("click",()=>{
   viewDate = addDays(viewDate,-1);
