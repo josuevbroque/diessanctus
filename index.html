@@ -2,7 +2,11 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#F3EEDF">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Dies Sanctus — Liturgia do Dia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
@@ -24,8 +28,9 @@
     --cor: var(--gold);
     --cor-soft: rgba(184,146,59,0.14);
   }
-  *{box-sizing:border-box;}
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;}
+  html{-webkit-text-size-adjust:100%; overscroll-behavior-y:contain;}
   body{
     background:
       radial-gradient(circle at 15% -5%, var(--cor-soft), transparent 45%),
@@ -34,16 +39,24 @@
     color:var(--ink);
     font-family:'Source Serif 4', serif;
     min-height:100vh;
+    min-height:100dvh;
     display:flex;
     justify-content:center;
-    padding:0 20px 80px;
+    padding:0 16px calc(48px + env(safe-area-inset-bottom));
     line-height:1.5;
     transition:background .4s ease;
+    overscroll-behavior-y:contain;
+    -webkit-user-select:none;
+    user-select:none;
+  }
+  .reading .texto, .reading .ref, .vazio-texto{
+    -webkit-user-select:text;
+    user-select:text;
   }
   .top-bar{
     position:fixed;
     top:0; left:0; right:0;
-    height:6px;
+    height:calc(6px + env(safe-area-inset-top));
     background:var(--cor);
     z-index:5;
     transition:background .4s ease;
@@ -51,7 +64,8 @@
   .page{
     width:100%;
     max-width:680px;
-    padding-top:44px;
+    padding-top:calc(44px + env(safe-area-inset-top));
+    overflow-wrap:break-word;
   }
   .masthead{
     text-align:center;
@@ -67,7 +81,7 @@
   .masthead h1{
     font-family:'Fraunces', serif;
     font-weight:600;
-    font-size:2.5rem;
+    font-size:clamp(1.8rem, 8vw, 2.5rem);
     margin:.25em 0 .1em;
     letter-spacing:-.01em;
   }
@@ -111,11 +125,14 @@
     gap:10px;
     margin-top:22px;
     flex-wrap:wrap;
+    width:100%;
   }
   .day-nav button{
     display:flex;
     align-items:center;
+    justify-content:center;
     gap:6px;
+    flex:0 1 auto;
   }
   .day-nav .voltar-hoje{
     border-color:var(--cor);
@@ -132,7 +149,8 @@
     margin:30px 0 30px;
   }
   .seal{
-    width:148px;height:148px;
+    width:clamp(118px, 32vw, 148px);
+    height:clamp(118px, 32vw, 148px);
     border-radius:50%;
     display:flex;
     flex-direction:column;
@@ -246,9 +264,10 @@
     margin-bottom:6px;
   }
   .reading .ref{
-    font-size:1.28rem;
+    font-size:clamp(1.05rem, 5vw, 1.28rem);
     font-family:'Fraunces', serif;
     font-weight:400;
+    overflow-wrap:break-word;
   }
   .reading .texto{
     margin-top:14px;
@@ -258,6 +277,7 @@
     border-left:2px solid var(--cor-soft);
     padding-left:16px;
     transition:border-color .4s ease;
+    overflow-wrap:break-word;
   }
   .reading .texto .vnum{
     font-size:.68em;
@@ -286,16 +306,24 @@
     border:1px solid var(--ink);
     background:transparent;
     color:var(--ink);
-    padding:6px 14px;
+    padding:10px 16px;
+    min-height:40px;
     border-radius:20px;
     cursor:pointer;
     text-decoration:none;
     transition:background .15s, color .15s;
+    touch-action:manipulation;
   }
   button:hover, .link-btn:hover{
     background:var(--cor);
     border-color:var(--cor);
     color:#fff;
+  }
+  button:active, .link-btn:active{
+    background:var(--cor);
+    border-color:var(--cor);
+    color:#fff;
+    transform:scale(.97);
   }
   button:focus-visible, .link-btn:focus-visible{
     outline:2px solid var(--cor);
@@ -335,8 +363,23 @@
   }
 
   @media (max-width:480px){
-    .masthead h1{font-size:1.9rem;}
-    .reading{padding:18px 18px;}
+    body{padding:0 12px calc(40px + env(safe-area-inset-bottom));}
+    .reading{padding:16px 16px;}
+    .reading.vazio{padding:20px 18px;}
+    .card{margin-top:26px;}
+    .seal-wrap{margin:22px 0 22px;}
+    .day-nav{gap:8px; margin-top:18px;}
+    .day-nav button{font-size:.78rem; padding:9px 12px;}
+    .toolbar{margin-top:22px;}
+    .reading .actions{gap:8px;}
+    .reading .actions button, .reading .actions .link-btn{flex:1 1 auto; text-align:center;}
+  }
+
+  @media (max-width:360px){
+    .masthead .eyebrow{font-size:.64rem;}
+    .masthead .data-hoje{font-size:1.05rem;}
+    .cor-badge{padding:4px 12px 4px 9px;}
+    .cor-badge span.label{font-size:.66rem;}
   }
 </style>
 </head>
