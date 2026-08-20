@@ -1,7 +1,8 @@
 # Dies Sanctus
 
-A liturgical calendar and lectionary reader. Pick a date and it
-shows the liturgical season, the day's color, and the four Revised Common
+A Lutheran liturgical calendar and lectionary reader in Portuguese. 
+Pick a date and it shows the liturgical season, the day's color, and the four 
+Revised Common
 Lectionary readings (Psalm, Old Testament, Epistle, Gospel), plus fixed-date
 feast days and commemorations, each paired with a public-domain painting.
 
