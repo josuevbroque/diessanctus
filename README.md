@@ -37,29 +37,6 @@ to serve, it's plain HTML/CSS/JS in one file. To host it publicly, any
 static host works (GitHub Pages, Netlify, Cloudflare Pages, etc.), since it
 makes no server calls except fetching images from Wikimedia Commons.
 
-## Adding a feast day
-
-Feast days with fixed dates live in the `DIAS_FESTIVOS` array in the
-`<script>` block, each with a month, day, name, liturgical color, and
-reading references. Commemorations without their own readings live in
-`COMEMORACOES`, keyed by `"month-day"`.
-
-## Adding an image to a commemoration
-
-Images are stored separately in `COMEMORACAO_IMAGENS`, also keyed by
-`"month-day"`:
-
-```js
-"8-20": {
-  url: "https://upload.wikimedia.org/wikipedia/commons/f/f1/Eli_and_Samuel.jpg",
-  legenda: "Samuel relata a Eli os juízos de Deus sobre a casa deste · John Singleton Copley, 1780"
-}
-```
-
-Only days present in this object show an image; everything else renders
-without one. `url` should point directly at a Wikimedia Commons file (either
-the original or a `/thumb/.../NNNpx-filename` scaled version).
-
 ## Tech
 
 Plain HTML, CSS, and vanilla JavaScript. Fonts are loaded from Google Fonts
