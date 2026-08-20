@@ -1062,8 +1062,19 @@ const COMEMORACOES = {
 };
 
 function comemoracaoDoDia(date){
-  const key = `${date.getMonth()+1}-${date.getDate()}`;
-  return COMEMORACOES[key] || null;
+  const data = new Date(date.getFullYear(),date.getMonth(),date.getDate());
+  if(!sameDate(ajustarDataSemanaSanta(data),data)) return null;
+  const key = `${data.getMonth()+1}-${data.getDate()}`;
+  const nomes = [];
+  if(COMEMORACOES[key]) nomes.push(COMEMORACOES[key]);
+  if(sameDate(data,segundaSegundaFeiraAposPascoa(data.getFullYear()))){
+    Object.entries(COMEMORACOES).forEach(([origem,nome])=>{
+      const [mes,dia]=origem.split("-").map(Number);
+      const origemData=new Date(data.getFullYear(),mes-1,dia);
+      if(sameDate(ajustarDataSemanaSanta(origemData),data)) nomes.push(nome);
+    });
+  }
+  return nomes.length ? nomes.join("; ") : null;
 }
 
 /* ---------- Imagens de comemorações (opcional, só para os dias mapeados) ---------- */
@@ -1120,10 +1131,18 @@ const COMEMORACAO_IMAGENS = {
 };
 
 function comemoracaoImagemDoDia(date){
-    const key = `${date.getMonth()+1}-${date.getDate()}`;
-    // Simple behavior: look up images by month-day keys (e.g. "8-16") or exact matches.
-    // This lets you only add the day (month-day), url and legenda to COMEMORACAO_IMAGENS.
-    return COMEMORACAO_IMAGENS[key] || null;
+    const data = new Date(date.getFullYear(),date.getMonth(),date.getDate());
+    if(!sameDate(ajustarDataSemanaSanta(data),data)) return null;
+    const key = `${data.getMonth()+1}-${data.getDate()}`;
+    if(COMEMORACAO_IMAGENS[key]) return COMEMORACAO_IMAGENS[key];
+    if(sameDate(data,segundaSegundaFeiraAposPascoa(data.getFullYear()))){
+      for(const [origem,imagem] of Object.entries(COMEMORACAO_IMAGENS)){
+        const [mes,dia]=origem.split("-").map(Number);
+        const origemData=new Date(data.getFullYear(),mes-1,dia);
+        if(sameDate(ajustarDataSemanaSanta(origemData),data)) return imagem;
+      }
+    }
+    return null;
 }
 
 /* ---------- Texto bíblico (Almeida Atualizada, domínio público) ---------- */
@@ -1259,6 +1278,19 @@ function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
 function sameYMD(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
 function ymdKey(d){return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();}
 
+function segundaSegundaFeiraAposPascoa(year){
+  return addDays(computeEaster(year),8);
+}
+
+function ajustarDataSemanaSanta(date){
+  const easter=computeEaster(date.getFullYear());
+  const palmSunday=addDays(easter,-7);
+  if(date>=palmSunday && date<easter){
+    return segundaSegundaFeiraAposPascoa(date.getFullYear());
+  }
+  return date;
+}
+
 function computeEaster(year){
   // Algoritmo de Meeus/Jones/Butcher (calendário gregoriano)
   const a=year%19, b=Math.floor(year/100), c=year%100;
@@ -1380,7 +1412,8 @@ function buildAnchors(adventYear){
   DIAS_FESTIVOS.forEach(f=>{
     // Nov/Dez pertencem ao início do ano eclesiástico (adventYear); o resto, ao easterYear
     const ano = (f.mes>=11) ? adventYear : easterYear;
-    const data = new Date(ano, f.mes-1, f.dia);
+    const dataOriginal = new Date(ano, f.mes-1, f.dia);
+    const data = ajustarDataSemanaSanta(dataOriginal);
     const key = ymdKey(data);
     if(anchorDates.has(key)) return; // não sobrepõe domingo/festa móvel já existente
     anchorDates.add(key);
