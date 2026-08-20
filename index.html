@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Dies Sanctus</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://upload.wikimedia.org" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -224,6 +225,37 @@
     font-weight:600;
   }
 
+  .comem-img-wrap{
+    max-width:420px;
+    margin:24px auto 0;
+    text-align:center;
+    padding:0 4px;
+  }
+  .comem-img-wrap .comem-img-frame{
+    padding:6px;
+    background:linear-gradient(180deg, #FBF8EF, var(--parchment-deep));
+    border:1px solid var(--rule);
+    border-radius:5px;
+    box-shadow:0 1px 0 rgba(255,255,255,.6) inset, 0 18px 40px -20px rgba(43,36,32,.35);
+  }
+  .comem-img-wrap img{
+    width:100%;
+    display:block;
+    border-radius:2px;
+    opacity:0;
+    filter:sepia(.12) saturate(1.05);
+    transition:opacity .5s ease;
+  }
+  .comem-img-wrap img.loaded{opacity:1;}
+  .comem-img-wrap .comem-img-legenda{
+    margin-top:10px;
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:.92rem;
+    line-height:1.4;
+    color:var(--ink-soft);
+  }
+
   .season-name{
     text-align:center;
     font-family:'Fraunces', serif;
@@ -426,6 +458,13 @@
 
   <div class="season-name" id="nomeDia">—</div>
   <div class="day-name" id="periodoNome">—</div>
+
+  <div class="comem-img-wrap" id="comemImg" style="display:none;">
+    <div class="comem-img-frame">
+      <img id="comemImgEl" alt="" loading="eager" fetchpriority="high" decoding="async">
+    </div>
+    <div class="comem-img-legenda" id="comemImgLegenda"></div>
+  </div>
 
   <div class="card" id="cardLeituras"></div>
 
@@ -816,6 +855,49 @@ const COMEMORACOES = {
 function comemoracaoDoDia(date){
   const key = `${date.getMonth()+1}-${date.getDate()}`;
   return COMEMORACOES[key] || null;
+}
+
+/* ---------- Imagens de comemorações (opcional, só para os dias mapeados) ---------- */
+const COMEMORACAO_IMAGENS = {
+  "11-30":{url:"https://upload.wikimedia.org/wikipedia/commons/c/c7/Polittico_del_1476%2C_s._andrea.jpg",legenda:"Santo André (Políptico de 1476)"},
+  "12-21":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Rubens_apostel_thomas.jpg/960px-Rubens_apostel_thomas.jpg",legenda:"Apóstolo Tomé (Rubens)"},
+  "12-26":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/St-stephen.jpg/960px-St-stephen.jpg",legenda:"Santo Estêvão"},
+  "12-27":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Rubens_apostel_johannes_grt.jpg/500px-Rubens_apostel_johannes_grt.jpg",legenda:"Apóstolo João (Rubens)"},
+  "12-28":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Lodovico_Mazzolino_-_Massacre_of_the_Innocents_-_323_-_Rijksmuseum.jpg/960px-Lodovico_Mazzolino_-_Massacre_of_the_Innocents_-_323_-_Rijksmuseum.jpg",legenda:"Massacre dos Inocentes (Lodovico Mazzolino)"},
+  "1-1":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Ludwig_Schongauer%2C_Circoncision_du_Christ.jpg/500px-Ludwig_Schongauer%2C_Circoncision_du_Christ.jpg",legenda:"Circuncisão de Cristo (Ludwig Schongauer)"},
+  "1-18":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Saint_Peter_in_Prayer_from_the_circle_of_Hendrick_Bloemaert_Centraal_Museum_2567.jpg/500px-Saint_Peter_in_Prayer_from_the_circle_of_Hendrick_Bloemaert_Centraal_Museum_2567.jpg",legenda:"São Pedro em Oração (Hendrick Bloemaert)"},
+  "1-24":{url:"https://upload.wikimedia.org/wikipedia/commons/d/d2/Saint_Timothy.jpg",legenda:"São Timóteo"},
+  "1-25":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/La_conversi%C3%B3n_de_san_Pablo_%28Murillo%29.jpg/500px-La_conversi%C3%B3n_de_san_Pablo_%28Murillo%29.jpg",legenda:"A Conversão de São Paulo (Murillo)"},
+  "1-26":{url:"https://upload.wikimedia.org/wikipedia/commons/d/dc/Fresco_of_Saint_Titos.jpg",legenda:"Fresco de São Tito"},
+  "2-2":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Giotto_-_The_Presentation_of_the_Christ_Child_in_the_Temple_-_P30w9_-_Isabella_Stewart_Gardner_Museum.jpg/500px-Giotto_-_The_Presentation_of_the_Christ_Child_in_the_Temple_-_P30w9_-_Isabella_Stewart_Gardner_Museum.jpg",legenda:"A Apresentação de Jesus no Templo (Giotto)"},
+  "2-24":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Rubens_apostle_Matthias_grt.jpg/500px-Rubens_apostle_Matthias_grt.jpg",legenda:"Apóstolo Matias (Rubens)"},
+  "3-19":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Guido_Reni_-_St_Joseph_with_the_Infant_Jesus_-_WGA19304.jpg/500px-Guido_Reni_-_St_Joseph_with_the_Infant_Jesus_-_WGA19304.jpg",legenda:"São José com o Menino Jesus (Guido Reni)"},
+  "3-25":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Annunciation_by_El_Greco_%281570-1575%2C_Prado%29.jpg/500px-Annunciation_by_El_Greco_%281570-1575%2C_Prado%29.jpg",legenda:"Anunciação (El Greco)"},
+  "4-25":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Emmanuel_Tzanes_-_St._Mark_the_Evangelist_-_1657.jpg/500px-Emmanuel_Tzanes_-_St._Mark_the_Evangelist_-_1657.jpg",legenda:"São Marcos o Evangelista (Emmanuel Tzanes)"},
+  "5-1":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Tr%C3%ADptico_de_S._Tiago_Menor_e_S._Filipe_MASF.jpg/500px-Tr%C3%ADptico_de_S._Tiago_Menor_e_S._Filipe_MASF.jpg",legenda:"Tríptico de S. Tiago Menor e S. Filipe"},
+  "5-31":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Giotto%2C_Lower_Church_Assisi%2C_The_Visitation_01.jpg/500px-Giotto%2C_Lower_Church_Assisi%2C_The_Visitation_01.jpg",legenda:"A Visitação (Giotto)"},
+  "6-11":{url:"https://upload.wikimedia.org/wikipedia/commons/0/0a/San_Barnaba.jpg",legenda:"São Barnabé"},
+  "6-24":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Nacimiento_de_San_Juan_Bautista.jpg/500px-Nacimiento_de_San_Juan_Bautista.jpg",legenda:"Nascimento de São João Batista"},
+  "6-29":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Masolino_-_Saints_Paul_and_Peter_-_Google_Art_Project.jpg/500px-Masolino_-_Saints_Paul_and_Peter_-_Google_Art_Project.jpg",legenda:"Santos Paulo e Pedro (Masolino)"},
+  "7-22":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/%CE%91%CE%B3%CE%AF%CE%B1%CE%9C%CE%B1%CF%81%CE%AF%CE%B1_%CE%B7_%CE%9C%CE%B1%CE%B3%CE%B4%CE%B1%CE%BB%CE%B7%CE%BD%CE%AE.jpg/500px-%CE%91%CE%B3%CE%AF%CE%B1%CE%9C%CE%B1%CF%81%CE%AF%CE%B1_%CE%B7_%CE%9C%CE%B1%CE%B3%CE%B4%CE%B1%CE%BB%CE%B7%CE%BD%CE%AE.jpg",legenda:"Santa Maria Magdalena"},
+  "7-25":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Guido_Reni_-_Saint_James_the_Greater_-_Google_Art_Project.jpg/500px-Guido_Reni_-_Saint_James_the_Greater_-_Google_Art_Project.jpg",legenda:"São Tiago o Maior (Guido Reni)"},
+  "8-15":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Nossa_Senhora_do_Perpetuo_Socorro_HD.jpg/500px-Nossa_Senhora_do_Perpetuo_Socorro_HD.jpg",legenda:"Nossa Senhora do Perpétuo Socorro"},
+  "8-20":{url:"https://upload.wikimedia.org/wikipedia/commons/f/f1/Eli_and_Samuel.jpg",legenda:"Samuel relata a Eli os juízos de Deus sobre a casa deste (John Singleton Copley)"},
+  "8-24":{url:"https://upload.wikimedia.org/wikipedia/commons/c/cf/Van_Dyck_-_The_Apostle_Saint_Bartholomew%2C_1617_-_1621.jpg",legenda:" Apóstolo São Bartolomeu (Van Dyck)"},
+  "8-29":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/St_John_the_Baptist_-_Google_Art_Project.jpg/500px-St_John_the_Baptist_-_Google_Art_Project.jpg",legenda:"São João Batista"},
+  "9-14":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/SS._Costantino_e_Elena_con_la_Croce_-_Mosco.jpg/500px-SS._Costantino_e_Elena_con_la_Croce_-_Mosco.jpg",legenda:"São Costantino e Santa Elena com a Cruz (Mosco)"},
+  "9-21":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Saint_Matthew_MET_LC-1975_1_006-001.jpg/1280px-Saint_Matthew_MET_LC-1975_1_006-001.jpg",legenda:"Saint Matthew MET LC-1975 1 006-001"},
+  "9-29":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/GuidoReni_MichaelDefeatsSatan.jpg/960px-GuidoReni_MichaelDefeatsSatan.jpg",legenda:"Arcanjo Miguel Derrota o Diabo (Guido Reni)"},
+  "10-18":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/St._Luke%2C_Painting_by_El_Greco._Indianapolis_Museum_of_Art.jpg/500px-St._Luke%2C_Painting_by_El_Greco._Indianapolis_Museum_of_Art.jpg",legenda:"São Lucas (El Greco)"},
+  "10-23":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Rubens_apostel_jakobus_mindere_grt.jpg/960px-Rubens_apostel_jakobus_mindere_grt.jpg",legenda:"Apóstolo Tiago (Rubens)"},
+  "10-31":{url:"https://upload.wikimedia.org/wikipedia/commons/2/20/Luther95theses.jpg",legenda:"Lutero fixa suas 95 teses na porta a marteladas (Ferdinand Pauwels)"},
+  "11-1":{url:"https://upload.wikimedia.org/wikipedia/commons/b/b9/All_saint.JPG",legenda:"Dia de Todos os Santos"},
+  "11-2":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Skogskyrkog%C3%A5rden_at_All_Saints_Day_2010-1.jpg/1920px-Skogskyrkog%C3%A5rden_at_All_Saints_Day_2010-1.jpg",legenda:"Skogskyrkogården no dia de Finados"}
+};
+
+function comemoracaoImagemDoDia(date){
+  const key = `${date.getMonth()+1}-${date.getDate()}`;
+  return COMEMORACAO_IMAGENS[key] || null;
 }
 
 /* ---------- Texto bíblico (Almeida Atualizada, domínio público) ---------- */
@@ -1211,6 +1293,25 @@ function montarPagina(){
   const comemoracao = comemoracaoDoDia(viewDate);
   const card=document.getElementById("cardLeituras");
   card.innerHTML="";
+
+  const comemImgWrap=document.getElementById("comemImg");
+  const comemImgEl=document.getElementById("comemImgEl");
+  const comemImgInfo=comemoracaoImagemDoDia(viewDate);
+  if(comemImgInfo){
+    comemImgEl.classList.remove("loaded");
+    comemImgEl.onload=()=>comemImgEl.classList.add("loaded");
+    comemImgEl.onerror=()=>{
+      console.error("Falha ao carregar imagem da comemoração:", comemImgInfo.url);
+      comemImgWrap.style.display="none";
+    };
+    comemImgEl.alt=comemImgInfo.legenda;
+    document.getElementById("comemImgLegenda").textContent=comemImgInfo.legenda;
+    comemImgWrap.style.display="block";
+    comemImgEl.src=comemImgInfo.url;
+  } else {
+    comemImgWrap.style.display="none";
+    comemImgEl.removeAttribute("src");
+  }
 
   if(ehDiaProprio && chosen.leitura && chosen.leitura.length > 0){
     document.getElementById("nomeDia").textContent=chosen.nomeDia;
