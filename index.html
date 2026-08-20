@@ -599,6 +599,12 @@
     .cor-badge{padding:4px 12px 4px 9px;}
     .cor-badge span.label{font-size:.66rem;}
   }
+#btnCalToggle {
+  position: fixed;
+  top: calc(10px + env(safe-area-inset-top));
+  left: 14px;
+  z-index: 6;
+}
 </style>
 </head>
 <body>
@@ -1084,6 +1090,7 @@ const COMEMORACAO_IMAGENS = {
   "7-22":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/%CE%91%CE%B3%CE%AF%CE%B1%CE%9C%CE%B1%CF%81%CE%AF%CE%B1_%CE%B7_%CE%9C%CE%B1%CE%B3%CE%B4%CE%B1%CE%BB%CE%B7%CE%BD%CE%AE.jpg/500px-%CE%91%CE%B3%CE%AF%CE%B1%CE%9C%CE%B1%CF%81%CE%AF%CE%B1_%CE%B7_%CE%9C%CE%B1%CE%B3%CE%B4%CE%B1%CE%BB%CE%B7%CE%BD%CE%AE.jpg",legenda:"Santa Maria Magdalena"},
   "7-25":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Guido_Reni_-_Saint_James_the_Greater_-_Google_Art_Project.jpg/500px-Guido_Reni_-_Saint_James_the_Greater_-_Google_Art_Project.jpg",legenda:"São Tiago o Maior (Guido Reni)"},
   "8-15":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Nossa_Senhora_do_Perpetuo_Socorro_HD.jpg/500px-Nossa_Senhora_do_Perpetuo_Socorro_HD.jpg",legenda:"Nossa Senhora do Perpétuo Socorro"},
+  "8-19":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Stained_glass_St_Bernard_MNMA_Cl3273.jpg/960px-Stained_glass_St_Bernard_MNMA_Cl3273.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail&_=20060823080740",legenda:"Vitral de São Bernardo de Clairvaux"},
   "8-20":{url:"https://upload.wikimedia.org/wikipedia/commons/f/f1/Eli_and_Samuel.jpg",legenda:"Samuel relata a Eli os juízos de Deus sobre a casa deste (John Singleton Copley)"},
   "8-24":{url:"https://upload.wikimedia.org/wikipedia/commons/c/cf/Van_Dyck_-_The_Apostle_Saint_Bartholomew%2C_1617_-_1621.jpg",legenda:" Apóstolo São Bartolomeu (Van Dyck)"},
   "8-29":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/St_John_the_Baptist_-_Google_Art_Project.jpg/500px-St_John_the_Baptist_-_Google_Art_Project.jpg",legenda:"São João Batista"},
@@ -1542,11 +1549,38 @@ function montarPagina(){
       btn.addEventListener("click",()=>{
         const textElement = btn.closest(".reading").querySelector(".texto");
         const textToCopy = textElement.textContent;
-        navigator.clipboard.writeText(textToCopy).then(()=>{
+
+        function indicateSuccess(){
           btn.textContent="Copiado ✓";
           btn.classList.add("copiado");
           setTimeout(()=>{btn.textContent="Copiar texto";btn.classList.remove("copiado");},1600);
-        });
+        }
+
+        function fallbackCopy(text){
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          // off-screen so it doesn't affect layout on mobile
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          ta.style.top = '0';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          try{ ta.setSelectionRange(0, 99999); }catch(e){}
+          try{
+            const ok = document.execCommand('copy');
+            if(ok) indicateSuccess();
+          }catch(e){}
+          document.body.removeChild(ta);
+        }
+
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(textToCopy).then(indicateSuccess).catch(()=>{
+            fallbackCopy(textToCopy);
+          });
+        } else {
+          fallbackCopy(textToCopy);
+        }
       });
     });
   } else {
