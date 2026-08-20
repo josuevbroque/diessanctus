@@ -1109,12 +1109,21 @@ const COMEMORACAO_IMAGENS = {
   "9-3":{url:"https://upload.wikimedia.org/wikipedia/commons/0/07/Gregorythegreat.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail_unscaled&_=20140202230013",legenda:"Gregório o Grande (Jusepe de Ribera)"},
   "9-4":{url:"https://upload.wikimedia.org/wikipedia/commons/1/14/Guido_Reni_-_Moses_with_the_Tables_of_the_Law_-_WGA19289.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail_unscaled&_=20110724092721",legenda:"Moisés com as Tábuas da Lei (Guido Reni)"},
   "9-5":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/The_Meeting_of_Zechariah_and_Elizabeth_%29.jpg/960px-The_Meeting_of_Zechariah_and_Elizabeth_%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",legenda:"Zacarias e Isabel (Francesco Guarino)"},
+  "8-23":{url:"https://allthehousehold.com/wp-content/uploads/2022/01/GL_GM_222-001.jpg",legenda:"Confissão de São Pedro"},
+  "8-16":{url:"https://upload.wikimedia.org/wikipedia/commons/b/b9/Jean-Germain_Drouais_-_The_Woman_of_Canaan_at_the_Feet_of_Christ_-_WGA06696.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail_unscaled&_=20110625063407",legenda:"Mulher Samaritana aos Pés de Cristo (Jean-Germain Drouais)"},
+  "8-9":{url:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIzgYZxNDgWBFlhqe9kgTyhp2wUN4qLiIDG_gkXn7lBA&s=10",legenda:"Jesus Andando Sobre as Águas (Ivan Aivazovsky)"},
+  "9-6":{url:"https://upload.wikimedia.org/wikipedia/commons/c/cc/Harold_Copping_-_The_little_child_set_in_their_midst_-_%28MeisterDrucke-103283%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail_unscaled&_=20191116093217",legenda:"A Criancinha no Meio Deles (Harold Copping)"},
+  "9-13":{url:"https://upload.wikimedia.org/wikipedia/commons/f/f6/Claude_Vignon_-_Parable_of_the_Unforgiving_Servant.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",legenda:"Parábola do Servo Ingrato (Claude Vignon)"},
+  "8-30":{url:"https://upload.wikimedia.org/wikipedia/commons/7/70/Brooklyn_Museum_-_Get_Thee_Behind_Me_Satan_%28R%C3%A9tire-toi_Satan%29_-_James_Tissot.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",legenda:"Afasta-te de mim, Satanás (James Tissot)"},
   "11-2":{url:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Skogskyrkog%C3%A5rden_at_All_Saints_Day_2010-1.jpg/1920px-Skogskyrkog%C3%A5rden_at_All_Saints_Day_2010-1.jpg",legenda:"Skogskyrkogården no dia de Finados"}
+
 };
 
 function comemoracaoImagemDoDia(date){
-  const key = `${date.getMonth()+1}-${date.getDate()}`;
-  return COMEMORACAO_IMAGENS[key] || null;
+    const key = `${date.getMonth()+1}-${date.getDate()}`;
+    // Simple behavior: look up images by month-day keys (e.g. "8-16") or exact matches.
+    // This lets you only add the day (month-day), url and legenda to COMEMORACAO_IMAGENS.
+    return COMEMORACAO_IMAGENS[key] || null;
 }
 
 /* ---------- Texto bíblico (Almeida Atualizada, domínio público) ---------- */
@@ -1472,7 +1481,7 @@ function formatarDataExtenso(d){
   return `${DIAS[d.getDay()]}, ${d.getDate()} de ${MESES[d.getMonth()]} de ${d.getFullYear()}`;
 }
 
-const LABELS=["Salmo","Antigo Testamento","Epístola","Evangelho"];
+const LABELS=["Salmo","Primeira Leitura","Segunda Leitura","Evangelho"];
 
 function bibleGatewayLink(ref){
   const limpo=refPrincipal(ref);
