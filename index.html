@@ -214,6 +214,15 @@
   .reading.vazio{
     padding:26px 28px;
   }
+  .reading.vazio .label{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:.72rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--cor);
+    transition:color .4s ease;
+  }
   .reading.vazio .vazio-texto{
     margin:10px 0 0;
     font-size:.98rem;
@@ -295,11 +304,33 @@
   }
 
   .reading{
-    padding:22px 28px;
     border-bottom:1px solid var(--rule);
   }
   .reading:last-child{border-bottom:none;}
-  .reading .label{
+
+  .reading-header{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    background:transparent;
+    border:none;
+    margin:0;
+    cursor:pointer;
+    text-align:left;
+    padding:22px 28px;
+    font:inherit;
+    color:inherit;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .reading-header .header-text{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    min-width:0;
+  }
+  .reading-header .label{
     font-family:'Fraunces', serif;
     font-weight:600;
     font-size:.72rem;
@@ -307,16 +338,49 @@
     text-transform:uppercase;
     color:var(--cor);
     transition:color .4s ease;
-    margin-bottom:6px;
   }
-  .reading .ref{
+  .reading-header .ref{
     font-size:clamp(1.05rem, 5vw, 1.28rem);
     font-family:'Fraunces', serif;
     font-weight:400;
     overflow-wrap:break-word;
   }
+  .reading-header .chevron{
+    flex-shrink:0;
+    width:22px;
+    height:22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--cor);
+    transition:transform .35s ease, color .4s ease;
+  }
+  .reading-header .chevron svg{width:100%;height:100%;}
+  .reading-header[aria-expanded="true"] .chevron{transform:rotate(180deg);}
+
+  .reading-body{
+    display:grid;
+    grid-template-rows:0fr;
+    transition:grid-template-rows .35s ease;
+  }
+  .reading-header[aria-expanded="true"] + .reading-body{
+    grid-template-rows:1fr;
+  }
+  .reading-body-inner{
+    overflow:hidden;
+    min-height:0;
+    padding:0 28px;
+  }
+  .reading-header[aria-expanded="true"] + .reading-body .reading-body-inner{
+    padding-bottom:22px;
+  }
+  .reading-header:hover{
+    background:var(--cor-soft);
+    border-color:transparent;
+    color:var(--ink);
+  }
+
   .reading .texto{
-    margin-top:14px;
     font-size:1rem;
     line-height:1.7;
     color:var(--ink);
@@ -582,7 +646,9 @@
 
   @media (max-width:480px){
     body{padding:0 12px calc(40px + env(safe-area-inset-bottom));}
-    .reading{padding:16px 16px;}
+    .reading-header{padding:16px 16px;}
+    .reading-body-inner{padding:0 16px;}
+    .reading-header[aria-expanded="true"] + .reading-body .reading-body-inner{padding-bottom:16px;}
     .reading.vazio{padding:20px 18px;}
     .card{margin-top:26px;}
     .seal-wrap{margin:22px 0 22px;}
@@ -1585,18 +1651,34 @@ function montarPagina(){
       const div=document.createElement("div");
       div.className="reading";
       div.innerHTML=`
-        <div class="label">${LABELS[idx]}</div>
-        <div class="ref">${ref}</div>
-        <div class="texto carregando">Carregando texto…</div>
-        <div class="actions" style="display: flex; justify-content: center; gap: 12px; align-items: center;">
-          <button data-ref="${ref.replace(/"/g,'&quot;')}">Copiar texto</button>
+        <button type="button" class="reading-header" aria-expanded="false">
+          <span class="header-text">
+            <span class="label">${LABELS[idx]}</span>
+            <span class="ref">${ref}</span>
+          </span>
+          <span class="chevron" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </button>
+        <div class="reading-body">
+          <div class="reading-body-inner">
+            <div class="texto carregando">Carregando texto…</div>
+            <div class="actions" style="display: flex; justify-content: center; gap: 12px; align-items: center;">
+              <button data-ref="${ref.replace(/"/g,'&quot;')}">Copiar texto</button>
+            </div>
+          </div>
         </div>`;
       card.appendChild(div);
       renderTexto(div.querySelector(".texto"), ref);
+      div.querySelector(".reading-header").addEventListener("click",function(){
+        const expanded = this.getAttribute("aria-expanded")==="true";
+        this.setAttribute("aria-expanded", String(!expanded));
+      });
     });
 
     card.querySelectorAll("button[data-ref]").forEach(btn=>{
-      btn.addEventListener("click",()=>{
+      btn.addEventListener("click",(e)=>{
+        e.stopPropagation();
         const textElement = btn.closest(".reading").querySelector(".texto");
         const textToCopy = textElement.textContent;
 
