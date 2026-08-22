@@ -1,44 +1,79 @@
 # Dies Sanctus
 
-A Lutheran liturgical calendar and lectionary reader in Portuguese. 
-Pick a date and it shows the liturgical season, the day's color, and the four 
-Revised Common
-Lectionary readings (Psalm, Old Testament, Epistle, Gospel), plus fixed-date
-feast days and commemorations, each paired with a public-domain painting.
+A digital liturgical lectionary based on the calendar and lectionary of the **Igreja Evangélica Luterana do Brasil (IELB)**.
 
-No build step, no backend, no dependencies to install. It's one `index.html`
-file that runs entirely in the browser.
+The website brings together the liturgical calendar, Propers, biblical readings, liturgical colors, Introits, Collects of the Day, Graduals, Verses, commemorations, and other liturgical information in a single interface.
+
+Its purpose is to provide a practical and accessible way to consult the IELB lectionary and follow the Church Year.
 
 ## Features
 
-- **Automatic liturgical calendar** — computes the full church year from the
-  date of Easter: Advent, Christmas, Epiphany, Lent, Easter, Ascension,
-  Pentecost, Trinity, and Ordinary Time (Tempo Comum), including the
-  three-year Sunday lectionary cycle (Year A/B/C).
-- **Daily readings** — Psalm, Old Testament, Epistle, and Gospel references
-  for each Sunday and major feast, each linking out to BibleGateway (ARC
-  translation) with one tap.
-- **Fixed-date feast days and commemorations** — a set list of saints' days
-  and holy days (`DIAS_FESTIVOS` and `COMEMORACOES`), overlaid on the moving
-  calendar without clobbering a Sunday or moveable feast that falls on the
-  same date.
-- **Illustrated commemorations** — feast days can carry an image (pulled from
-  Wikimedia Commons) shown above the readings, framed to match the site's
-  parchment-and-gold aesthetic, with a caption underneath.
-- **Day navigation** — step forward/backward one day at a time, or jump back
-  to today.
-- **Liturgical color** — each day is tagged with its color (green, purple,
-  white, red, scarlet, black, blue), which tints the page accordingly.
+- Liturgical calendar navigation
+- Daily Propers
+- Biblical readings for each day
+- Full text display for short and long readings
+- Support for alternative readings
+- Liturgical colors
+- Lectionary cycle identification
+- Introit
+- Collect of the Day
+- Gradual
+- Verse
+- Commemorations of saints and other observances
+- Liturgical precedence between Propers and coinciding observances
+- Images for selected Propers and commemorations
+- Collapsible reading sections
+- Copy button for biblical texts
+- Adjustable text size
+- Responsive interface for desktop and mobile devices
 
-## Running it
+## Sources
 
-Just open `index.html` in a browser. There's nothing to install and nothing
-to serve, it's plain HTML/CSS/JS in one file. To host it publicly, any
-static host works (GitHub Pages, Netlify, Cloudflare Pages, etc.), since it
-makes no server calls except fetching images from Wikimedia Commons.
+### Liturgical Calendar and Lectionary
 
-## Tech
+The liturgical calendar, Propers, readings, commemorations, and other liturgical data are based on source materials relating to the liturgical practice and lectionary of the **Igreja Evangélica Luterana do Brasil (IELB)**.
 
-Plain HTML, CSS, and vanilla JavaScript. Fonts are loaded from Google Fonts
-(Fraunces, Source Serif 4, Cormorant Garamond). No frameworks, no build
-tools, no package manager.
+You can visit their website here: 
+
+- https://www.ielb.org.br
+
+### Biblical Texts
+
+Biblical texts are loaded from: 
+
+- https://github.com/MaatheusGois/bible
+
+The Bible version used is the ARC.
+
+### Images
+
+Most images may be found in Wikimedia:
+
+- https://commons.wikimedia.org
+
+## Technologies
+
+The project is built primarily with:
+
+- HTML
+- CSS
+- JavaScript
+
+## Reporting Errors
+
+If you find an error, please open an issue and include:
+
+- The affected date
+- The Proper or observance
+- The displayed reference
+- The incorrect information
+- The proposed correction
+- The source supporting the correction
+
+## Disclaimer
+
+This is an independent digital project intended to facilitate consultation of liturgical and lectionary information.
+
+Although every effort is made to maintain fidelity to the sources used, errors in transcription, programming, dates, references, or other data may occur. The contents should therefore be continuously reviewed against their original sources.
+
+This project is not an official publication, product, or service of the Igreja Evangélica Luterana do Brasil.
