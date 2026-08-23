@@ -39,10 +39,6 @@ You can visit their website here:
 
 ### Biblical Texts
 
-Biblical texts are loaded from: 
-
-- https://github.com/MaatheusGois/bible
-
 The Bible version used is the ARC.
 
 ### Images
@@ -76,4 +72,8 @@ This is an independent digital project intended to facilitate consultation of li
 
 Although every effort is made to maintain fidelity to the sources used, errors in transcription, programming, dates, references, or other data may occur. The contents should therefore be continuously reviewed against their original sources.
 
-This project is not an official publication, product, or service of the Igreja Evangélica Luterana do Brasil.
+This project is not an official publication, product, or service of the Igreja Evangélica Luterana do Brasil or from Sociedade Bíblica do Brasil. 
+
+Lectionary: Hinário Luterano (IELB) © Igreja Evangélica Luterana do Brasil. All rights reserved.
+
+Biblical text: Almeida Revista e Corrigida (ARC) © Sociedade Bíblica do Brasil. All rights reserved.
