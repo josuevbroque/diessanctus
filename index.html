@@ -496,6 +496,25 @@
     margin-top:28px;
     flex-wrap:wrap;
   }
+  .btn-copy-tudo{
+    background:var(--cor);
+    border-color:var(--cor);
+    color:#fff;
+    font-weight:600;
+    letter-spacing:.02em;
+    transition:background .4s ease, border-color .4s ease, filter .15s, transform .15s;
+  }
+  .btn-copy-tudo:hover{
+    filter:brightness(1.08);
+  }
+  .btn-copy-tudo:active{
+    transform:scale(.97);
+  }
+  .btn-copy-tudo.copiado{
+    background:var(--verde);
+    border-color:var(--verde);
+    filter:none;
+  }
 
   .aviso{
     max-width:620px;
@@ -1334,10 +1353,11 @@ function fallbackCopyText(text){
   return ok;
 }
 
-function indicateCopySuccess(btn){
+function indicateCopySuccess(btn, labelOriginal){
+  const original = labelOriginal || "Copiar texto";
   btn.textContent = "Copiado ✓";
   btn.classList.add("copiado");
-  setTimeout(()=>{ btn.textContent = "Copiar texto"; btn.classList.remove("copiado"); }, 1600);
+  setTimeout(()=>{ btn.textContent = original; btn.classList.remove("copiado"); }, 1600);
 }
 
 function copyReadingText(btn){
@@ -1352,12 +1372,115 @@ function copyReadingText(btn){
   }
 }
 
+/* ---------- Copiar o dia inteiro (todas as leituras, orações, etc.) ---------- */
+const SITE_NOME = "Dies Sanctus";
+const SITE_URL = "https://josuevbroque.github.io/diessanctus/";
+const REGUA = "─".repeat(34);
+
+function negrito(texto){
+  return `*${texto}*`;
+}
+
+function textoSemNumerosDeVersiculo(textoEl){
+  const clone = textoEl.cloneNode(true);
+  clone.querySelectorAll(".vnum").forEach(vnum=>vnum.remove());
+  return clone.textContent.replace(/\s+/g," ").trim();
+}
+
+function coletarBlocosDoCard(cardEl){
+  if(!cardEl) return [];
+  return Array.from(cardEl.querySelectorAll(".reading")).map(readingEl=>{
+    const labelEl = readingEl.querySelector(".reading-header .label");
+    const refEl = readingEl.querySelector(".reading-header .ref");
+    const textoEl = readingEl.querySelector(".texto");
+    let corpo = "";
+    if(textoEl){
+      const linhas = textoEl.querySelectorAll("p.liturgia-linha, p.oracao-texto");
+      if(linhas.length){
+        corpo = Array.from(linhas).map(p=>{
+          const recuo = p.classList.contains("resposta") ? "   " : "";
+          return recuo + p.textContent.trim();
+        }).join("\n");
+      } else {
+        corpo = textoSemNumerosDeVersiculo(textoEl);
+      }
+    }
+    return {
+      label: labelEl ? labelEl.textContent.trim() : "",
+      ref: refEl ? refEl.textContent.trim() : "",
+      corpo
+    };
+  }).filter(bloco=>bloco.corpo);
+}
+
+function formatarBloco(bloco){
+  const cabecalho = bloco.ref ? `${bloco.label} · ${bloco.ref}` : bloco.label;
+  return `${negrito(cabecalho)}\n${bloco.corpo}`;
+}
+
+function montarTextoCompleto(){
+  const partes = [];
+
+  partes.push(negrito(`✠ ${SITE_NOME.toUpperCase()} ✠`));
+
+  const dataHoje = EL.dataHoje.textContent.trim();
+  const cor = EL.corBadgeLabel.textContent.trim();
+  const cabecalhoTopo = [dataHoje, cor].filter(Boolean).join("\n");
+  if(cabecalhoTopo) partes.push(cabecalhoTopo);
+
+  const nomeDia = EL.nomeDia.textContent.trim();
+  const periodoNome = EL.periodoNome.textContent.trim();
+  const cabecalhoDia = [nomeDia ? negrito(nomeDia) : "", periodoNome].filter(Boolean).join("\n");
+  if(cabecalhoDia){
+    partes.push(REGUA);
+    partes.push(cabecalhoDia);
+  }
+
+  const introito = coletarBlocosDoCard(EL.cardIntroitoOracao);
+  if(introito.length){
+    partes.push(REGUA);
+    partes.push(introito.map(formatarBloco).join("\n\n"));
+  }
+
+  const leituras = coletarBlocosDoCard(EL.cardLeituras);
+  if(leituras.length){
+    partes.push(REGUA);
+    partes.push([negrito("LEITURAS"), ...leituras.map(formatarBloco)].join("\n\n"));
+  }
+
+  const gradVerso = coletarBlocosDoCard(EL.cardGradualVerso);
+  if(gradVerso.length){
+    partes.push(REGUA);
+    partes.push(gradVerso.map(formatarBloco).join("\n\n"));
+  }
+
+  partes.push(REGUA);
+  partes.push(`${negrito(SITE_NOME)}\n${SITE_URL}`);
+
+  return partes.join("\n\n");
+}
+
+function copiarDiaInteiro(btn){
+  const rotuloOriginal = btn.textContent;
+  const texto = montarTextoCompleto();
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(texto).then(()=>indicateCopySuccess(btn, rotuloOriginal)).catch(()=>{
+      if(fallbackCopyText(texto)) indicateCopySuccess(btn, rotuloOriginal);
+    });
+  } else if(fallbackCopyText(texto)){
+    indicateCopySuccess(btn, rotuloOriginal);
+  }
+}
+
 document.addEventListener("click",(e)=>{
   const header = e.target.closest(".reading-header");
   if(header){ toggleReadingHeader(header); return; }
 
   const copyBtn = e.target.closest(".btn-copy");
   if(copyBtn){ e.stopPropagation(); copyReadingText(copyBtn); return; }
+
+  const copyTudoBtn = e.target.closest(".btn-copy-tudo");
+  if(copyTudoBtn){ e.stopPropagation(); copiarDiaInteiro(copyTudoBtn); return; }
 
   const verUltimaBtn = e.target.closest(".btn-ver-ultima");
   if(verUltimaBtn){
@@ -1538,6 +1661,9 @@ function montarPagina(){
     card.appendChild(div);
   }
 
+  EL.toolbar.innerHTML = ehDiaProprio
+    ? `<button type="button" class="btn-copy-tudo">Copiar Tudo</button>`
+    : "";
   EL.toolbar.style.display = ehDiaProprio ? "flex" : "none";
 }
 
